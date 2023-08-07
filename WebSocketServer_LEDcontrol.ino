@@ -156,8 +156,6 @@ void loop()
         }
         else
         {
-            USE_SERIAL.println(receivedCRC);
-            USE_SERIAL.println(calculatedCRC);
             // CRC校验失败，清空串口缓冲区
             while (Serial.available())
             {
