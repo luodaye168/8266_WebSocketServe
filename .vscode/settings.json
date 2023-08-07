@@ -1,0 +1,9 @@
+{
+	"arduino.path": "D:\\Arduino", //{path}是你的Arduino安装路径
+    "C_Cpp.intelliSenseEngine": "Tag Parser",
+    "editor.insertSpaces": true,
+    "files.autoGuessEncoding": true,
+    "arduino.logLevel": "info",
+    "explorer.confirmDelete": false,
+    "editor.detectIndentation": false,
+}
