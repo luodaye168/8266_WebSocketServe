@@ -48,6 +48,8 @@
     <input id="msg" type="text" value="01 00 0B 00 00 5A A0"><br><br>
     <input type="button" value="开使能" onclick="connection.send('01 C0 03 AA 55 B8 40');console.log('01 C0 03 AA 55 B8 40')">
     <input type="button" value="关使能" onclick="connection.send('01 C0 04 55 AA 20 DF');">
+    <input type="button" value="50%" onclick="connection.send('01 C0 01 36 00 81 F6');">
+    <input type="button" value="10%" onclick="connection.send('01 C0 01 0A CD C9 EF');">
 
 </body>
 

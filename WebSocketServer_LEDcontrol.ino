@@ -82,13 +82,35 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
     }
     break;
     case WStype_TEXT:
-        for (size_t i = 0; i < length; i += 3)
+        // Convert the received payload (hex string) to a byte array
+        uint8_t data[length / 2];
+        size_t dataIndex = 0;
+        for (size_t i = 0; i < length; i += 3) // 每个16进制数之间有一个空格，所以长度为3
         {
-            char hexStr[3];
-            memcpy(hexStr, &payload[i], 2);
-            hexStr[2] = '\0';
-            int hexValue = strtol(hexStr, NULL, 16);
-            USE_SERIAL.write((uint8_t)hexValue);
+            if (payload[i] == ' ') // 跳过空格字符
+            {
+                continue;
+            }
+            char hexByte[3] = {payload[i], payload[i + 1], '\0'};
+            data[dataIndex] = strtol(hexByte, NULL, 16);
+            dataIndex++;
+        }
+        // Calculate CRC for the received data
+        uint16_t receivedCRC = ((uint16_t)data[dataIndex - 2] << 8) | data[dataIndex - 1];
+        uint16_t calculatedCRC = CRC16(data, dataIndex - 2);
+        // USE_SERIAL.println(dataIndex);
+        // USE_SERIAL.println(receivedCRC);
+        // USE_SERIAL.println(calculatedCRC);
+        if (receivedCRC == calculatedCRC)
+        {
+            for (size_t i = 0; i < dataIndex; i++)
+            {
+                USE_SERIAL.write((uint8_t)data[i]);
+            }
+        }
+        else
+        {
+            USE_SERIAL.println("CRC mismatch");
         }
         break;
     }
@@ -128,7 +150,6 @@ void setup()
     MDNS.addService("ws", "tcp", 81);
 }
 
-int i = 0;
 
 void loop()
 {
@@ -149,7 +170,6 @@ void loop()
 
         if (receivedCRC == calculatedCRC)
         {
-            // CRC matches, send the data
             char hexString[14];
             sprintf(hexString, "%02X%02X%02X%02X%02X%02X%02X", data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
             webSocket.broadcastTXT(hexString);
