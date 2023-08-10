@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无壤秋实</title>
+    <link rel="stylesheet" href="./layui/css/layui.css">
+    <link rel="stylesheet" href="/css/edit_device.css">
+</head>
+
+<body>
+
+    <div class="layui-card">
+        <div class="layui-card-header" style="color: #1E9FFF;"><i class="layui-icon layui-icon-edit"></i> 编辑设备</div>
+        <div class="layui-card-body">
+            <table class="layui-table">
+                <colgroup>
+                    <col>
+                    <col>
+                    <col width="140">
+                </colgroup>
+
+                <thead>
+                    <tr>
+                        <th>设备名称</th>
+                        <th>设备id</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+
+                <tbody id="view"></tbody>
+
+            </table>
+        </div>
+    </div>
+    <script id="tbody" type="text/html">
+        {{#  layui.each(d.device, function(index, item){ }} 
+        <tr>
+            <td>{{ item.device_name }}</td>
+            <td>{{ item.device_id }}</td>
+            <td>
+                <button type="button" class="layui-btn layui-btn-sm btn-edit" device-id="{{ item.id}}" device-name="{{ item.device_name }}">编辑</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-danger  btn-del" device-id="{{ item.id}}" device-name="{{ item.device_name }}">删除</button>
+            </td>
+        </tr>
+        {{#  }); }} 
+
+        {{#  if(d.device.length === 0){ }}
+          无数据
+        {{#  } }} 
+      </script>
+
+    <script type="text/html" id="update-device-tpl">
+        <form class="layui-form" id="new-device-form">
+            <div class="layui-form-item">
+                <input type="text" name="new-device-name" required  lay-verify="required" placeholder="新设备名" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                  <button class="layui-btn layui-btn-primary layui-border-blue layui-btn-fluid  layui-btn-radius" lay-submit lay-filter="formDemo">确认修改</button>
+            </div>
+        </form>
+    </script>
+
+    <script src="./layui/layui.js"></script>
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <script src="./js/baseAPI.js"></script>
+    <script src="/js/edit_device.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,144 @@
+body {
+    background-color: rgb(242, 242, 242);
+    background-image: url(/images/device_bg.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% auto;
+    padding: 15px;
+    z-index: -1;
+    /* font-family:"宋体" */
+}
+
+/* 兼容苹果固定背景图片 */
+body::before {
+    content: '';
+    position: fixed;
+    z-index: -1;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: url(/images/device_bg.jpg) no-repeat;
+    background-size: 100% auto;
+}
+
+#top-text {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    /* line-height: 30px; */
+    padding-top: 15px;
+    color: #fff;
+}
+
+/* layui-unselect layui-form-radio */
+.layui-form-radio {
+    background-color: rgb(255, 255, 255) !important;
+}
+
+
+.layui-layout-left {
+    left: 0;
+}
+
+.layui-layout-admin .layui-header {
+    background: none;
+    /* background-image: linear-gradient(-20deg,rgb(101, 141, 193),rgb(152, 217, 246)); */
+    min-width: 320px;
+}
+
+.body {
+    /* position: relative; */
+    margin: 60px auto;
+    max-width: 480px;
+    min-width: 320px;
+    font-size: 16px;
+    /* background: linear-gradient(180deg,#5ba7e4 0,#84baf1 73%,#f0f2f5 100%); */
+}
+
+/* 卡片头部的颜色 */
+.layui-card-header {
+    /* color: rgb(30, 159, 255); */
+}
+
+.layui-panel {
+    background-color: rgba(12, 12, 12, 0.1);
+    border-style: none;
+    /* color: #fff; */
+    font-size: 15px;
+}
+
+.layui-card {
+    border-radius: 10px;
+    position: relative;
+    margin-bottom: 30px !important;
+    background-color: rgba(12, 12, 12, 0.1);
+    /* opacity: 0.5; */
+
+}
+
+.layui-card-body {
+    color: #fff;
+    /* transform: scale(1); */
+}
+
+.layui-icon-log,
+.layui-icon-next {
+    float: right;
+}
+
+.layui-form-label {
+    text-align: left;
+    width: auto;
+}
+
+.layui-input-block {
+    float: right;
+}
+
+.layui-form-item {
+    border-bottom: 1px solid rgb(210, 210, 210);
+}
+
+.layui-form-item input {
+    /* background-color: red; */
+    margin: 5px 0;
+
+}
+
+.layui-panel {
+    color: #fff;
+}
+
+.layui-panel>div {
+    /* background-color: red; */
+    padding: 15px !important;
+}
+
+p {
+    text-align: center;
+}
+
+.layui-layer-page {
+    min-width: 300px;
+}
+
+.layui-layer-page .layui-form-item {
+    padding: 10px 30px;
+    position: relative;
+}
+
+.edit_div {
+    position: absolute;
+    left: 10px;
+    z-index: 999;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #5FB878;
+    color: rgba(12, 12, 12, 1);
+    display: none;
+}
+
+/* #update-sensor-tpl .layui-form-item {
+    border-bottom: none;
+} */
