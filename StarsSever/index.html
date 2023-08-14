@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>星辰</title>
+    <link rel="stylesheet" href="./layui/css/layui.css">
+    <link rel="stylesheet" href="./css/index.css">
+</head>
+
+<body>
+    <div class="layui-layout layui-layout-admin">
+        <!-- 头部 -->
+        <div class="layui-header">
+            <div class="layui-logo ">stars</div>
+            <!-- 头部区域（可配合layui 已有的水平导航） -->
+            <ul class="layui-nav layui-layout-left ">
+                <!-- 移动端显示 -->
+                <li class="layui-nav-item layui-hide-sm" lay-header-event="menuLeft">
+                    <!-- <i class="layui-icon layui-icon-spread-left"></i> -->
+                    <i id="icon-turn" class="layui-icon layui-icon-spread-left" style="font-size: 25px;"></i>
+                </li>
+            </ul>
+
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item " lay-header-event="ctrl_mode" lay-unselect>
+                    <button class="layui-btn demo-dropdown-base">
+                        <span style="color: #e6ecf1;">控制模式</span>
+                        <!-- <i class="layui-icon layui-icon-down layui-font-12"></i> -->
+                    </button>
+                </li>
+                <span>&nbsp;&nbsp;&nbsp;</span>
+                <li class="layui-nav-item" id="stop" lay-unselect onclick="sendmsg('01 C0 04 55 AA 20 DF')">
+
+                    <button class="layui-btn demo-dropdown-stop" style="background: #f80505;">
+                        <span style="color: #f1e6e6;">关使能</span>
+                        <!-- <i class="layui-icon layui-icon-down layui-font-12"></i> -->
+                    </button>
+                </li>
+                <span>&nbsp;&nbsp;&nbsp;</span>
+                <li class="layui-nav-item" lay-header-event="menuRight" lay-unselect>
+                    <i class="layui-icon layui-icon-set" style="font-size: 25px; color: #e6ecf1;"></i>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 侧边栏 -->
+        <div class="layui-side layui-bg-black ">
+            <div class="layui-side-scroll ">
+                <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                <ul class="layui-nav layui-nav-tree" lay-shrink="all">
+                    <li class="layui-nav-item layui-this"><a href="index-body.html" target="fm"><i
+                                class="layui-icon layui-icon-home" style="font-size: 17px;"></i>&nbsp;首页</a>
+                    </li>
+
+                    <li class="layui-nav-item">
+                        <a href="pa.html" target="fm"><i class="layui-icon layui-icon-edit"
+                                style="font-size: 18px;"></i>&nbsp;参数配置<i class="layui-icon layui-icon-right"
+                                style="float: right;"></i></a>
+                    </li>
+
+                    <li class="layui-nav-item">
+                        <a href="tool.html" target="fm"><i class="layui-icon layui-icon-util"
+                                style="font-size: 18px;"></i>&nbsp;实用工具<i class="layui-icon layui-icon-right"
+                                style="float: right;"></i></a>
+                    </li>
+
+                    <li class="layui-nav-item">
+                        <a href="./log.html" target="fm"><i class="layui-icon layui-icon-tabs"
+                                style="font-size: 18px;"></i>&nbsp;更新日志<i class="layui-icon layui-icon-right"
+                                style="float: right;"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 主体 -->
+        <div class="layui-body">
+            <!-- 内容主体区域 -->
+            <!-- <iframe id="iFrame" name="fm" src="index-body.html" frameborder="0"></iframe> -->
+            <iframe id="iFrame" name="fm" src="tool.html" frameborder="0"></iframe>
+        </div>
+
+        <!-- 底部固定区域 -->
+        <div class="layui-footer " style="left: 0; ">
+            <input id="can_flag" type="text" value=" " readonly="readonly"
+            style="width: 18px; background: #07f52a;">
+            <span class="layui-hide-xs">发送</span> <input id="send_msg" type="text" value="01 00 0B 00 00 5A A0"
+                readonly="readonly" style="width: 150px; padding: 0 5px;">
+            <span class="layui-hide-xs">接收 </span><input id="res_msg" type="text" value="01 00 0B 00 00 5A A0"
+                readonly="readonly" style="width: 150px; padding: 0 5px; color: #16baaa;">
+        </div>
+    </div>
+
+    <script src="./layui/layui.js"></script>
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <!-- <script src="./js/baseAPI.js"></script> -->
+    <script src="./js/index.js"></script>
+    <script>
+        layui.use(['element', 'layer', 'util'], function () {
+            var element = layui.element
+                , layer = layui.layer
+                , util = layui.util
+                , $ = layui.$
+                , dropdown = layui.dropdown;
+
+            dropdown.render({
+                elem: '.demo-dropdown-base', // 绑定元素选择器，此处指向 class 可同时绑定多个元素
+                data: [{
+                    title: '位置环',
+                    id: 100
+                }, {
+                    title: '速度环',
+                    id: 101
+                }, {
+                    title: '力矩环',
+                    id: 102
+                }],
+                click: function (obj) {
+                    this.elem.find('span').text(obj.title);
+                }
+            });
+            //头部事件
+            util.event('lay-header-event', {
+                //左侧菜单事件
+                // menuLeft: function (othis) {
+                //     // layer.msg('展开左侧菜单的操作', { icon: 0 });
+                //     $('.layui-side').css('display', 'none')
+                //     $('.layui-body').css('left', '0')
+                //     $('.layui-layout-left').css('left', '0')
+                //     $('#icon-turn').toggleClass("layui-icon-shrink-right",500)
+                //     $('#icon-turn').toggleClass("layui-icon-spread-left",500)
+
+                // }
+
+                menuRight: function () {  // 右侧菜单事件
+                    layer.open({
+                        type: 1,
+                        title: '基础配置',
+                        content: '<div style="padding: 15px;">ip,端口,用户，控制模式</div>',
+                        area: ['260px', '100%'],
+                        offset: 'rt', // 右上角
+                        anim: 'slideLeft', // 从右侧抽屉滑出
+                        shadeClose: true,
+                        scrollbar: false
+                    });
+                }
+            });
+
+        });
+    </script>
+</body>
+
+</html>

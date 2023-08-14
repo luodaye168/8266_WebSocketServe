@@ -59,9 +59,9 @@ const int crc_ta[256] = { // CRC 余式表
 unsigned short CRC16(unsigned char *ptr, unsigned char len);
 #line 72 "c:\\Users\\stars\\Desktop\\8266_WebSocketServer\\WebSocketServer_LEDcontrol.ino"
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length);
-#line 120 "c:\\Users\\stars\\Desktop\\8266_WebSocketServer\\WebSocketServer_LEDcontrol.ino"
+#line 119 "c:\\Users\\stars\\Desktop\\8266_WebSocketServer\\WebSocketServer_LEDcontrol.ino"
 void setup();
-#line 155 "c:\\Users\\stars\\Desktop\\8266_WebSocketServer\\WebSocketServer_LEDcontrol.ino"
+#line 154 "c:\\Users\\stars\\Desktop\\8266_WebSocketServer\\WebSocketServer_LEDcontrol.ino"
 void loop();
 #line 57 "c:\\Users\\stars\\Desktop\\8266_WebSocketServer\\WebSocketServer_LEDcontrol.ino"
 unsigned short CRC16(unsigned char *ptr, unsigned char len)
@@ -113,7 +113,6 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
         // USE_SERIAL.println(calculatedCRC);
         if (receivedCRC == calculatedCRC)
         {
-            // CRC matches, send the data
             for (size_t i = 0; i < dataIndex; i++)
             {
                 USE_SERIAL.write((uint8_t)data[i]);

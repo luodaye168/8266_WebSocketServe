@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Demo</title>
+    <link href="./layui/css/layui.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="layui-form" style="margin: 10px;">
+        <div class="layui-form-item">
+            <div class="layui-input-group">
+                <div class="layui-input-split layui-input-prefix">
+                    命令
+                </div>
+                <input id="tool_input_cmd" type="text" placeholder="两位十六进制数" class="layui-input" maxlength="4">
+                <div class="layui-input-split layui-input-suffix" id="cmd_tip">
+                    HEX
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-group">
+                <div class="layui-input-split layui-input-prefix">
+                    数据
+                </div>
+                <input id="tool_input_data" type="text" placeholder="两位十六进制数" class="layui-input" maxlength="4">
+                <div class="layui-input-split layui-input-suffix" id="data_tip">
+                    HEX
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-group">
+                <div class="layui-input-split layui-input-prefix">
+                    地址
+                </div>
+                <input id="tool_input_addr" type="number" placeholder="0 ~ 255" class="layui-input" >
+                <div id="tool_icon_ok" class="layui-input-split layui-input-suffix" style="cursor: pointer;">
+                    &nbsp;<i class="layui-icon layui-icon-ok" style="font-size: 20px;"></i>&nbsp;
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-group">
+                <div class="layui-input-split layui-input-prefix">
+                    下传帧
+                </div>
+                <input id="tool_input_send_msg" type="text" placeholder="" class="layui-input">
+                <div id="tool_icon_send" class="layui-input-split layui-input-suffix" style="cursor: pointer;">
+                    <i class="layui-icon layui-icon-download-circle" style="font-size: 25px;"></i>
+                </div>
+            </div>
+        </div>
+
+        <hr style="margin: 32px 0;">
+
+
+        <!-- 请勿在项目正式环境中引用该 layui.js 地址 -->
+        <script src="./js/jquery-3.6.0.min.js"></script>
+        <script src="./layui/layui.js"></script>
+        <script src="./js/tool.js"></script>
+</body>
+
+</html>

@@ -28,7 +28,7 @@
                 </li> -->
                 <li class="layui-nav-item" lay-header-event="menuRight" lay-unselect>
                     <a href="javascript:;">
-                        <i class="layui-icon layui-icon-more-vertical"></i>
+                        <i class="layui-icon layui-icon-set" style="font-size: 25px; color: #e6ecf1;"></i>
                     </a>
                 </li>
             </ul>
@@ -47,31 +47,20 @@
                     <li class="layui-nav-item layui-this"><a href="index-body.html" target="fm"><i
                                 class="layui-icon layui-icon-home"></i>首页</a>
                     </li>
-                    <!-- <li class="layui-nav-item"><a href="javascript:;">
-                            <i class="layui-icon layui-icon-transfer"></i>设备管理</a>
-                        <dl class="layui-nav-child">
-                            <dd><a class="add_device" href="javascript:;">添加设备</a></dd>
-                            <dd><a href="/edit_device.html" target="fm">编辑设备</a></dd>
-                            <dd><a class="ing" href="javascript:;">设备库</a></dd>
-                        </dl>
-                    </li> -->
 
                     <li class="layui-nav-item">
-                        <a href="pa.html" target="fm"><i class="layui-icon layui-icon-username"></i>参数配置<i
+                        <a href="pa.html" target="fm"><i class="layui-icon layui-icon-edit" style="font-size: 18px;"></i>参数配置<i
                                 class="layui-icon layui-icon-right" style="float: right;"></i></a>
-                        <!-- <dl class="layui-nav-child"> -->
-                        <!-- <dd><a href="/user/user_info.html" target="fm">基本资料</a></dd> -->
-                        <!-- <dd><a href="javascript:;">修改头像</a></dd> -->
-                        <!-- </dl> -->
                     </li>
 
                     <li class="layui-nav-item">
-                        <a href="./log.html" target="fm"><i class="layui-icon layui-icon-tabs"></i>更新日志<i
+                        <a href="pa.html" target="fm"><i class="layui-icon layui-icon-util" style="font-size: 18px;"></i>实用工具<i
                                 class="layui-icon layui-icon-right" style="float: right;"></i></a>
-                        <!-- <dl class="layui-nav-child"> -->
-                        <!-- <dd><a href="/user/user_info.html" target="fm">基本资料</a></dd> -->
-                        <!-- <dd><a href="javascript:;">修改头像</a></dd> -->
-                        <!-- </dl> -->
+                    </li>
+
+                    <li class="layui-nav-item">
+                        <a href="./log.html" target="fm"><i class="layui-icon layui-icon-tabs" style="font-size: 18px;"></i>更新日志<i
+                                class="layui-icon layui-icon-right" style="float: right;"></i></a>
                     </li>
                 </ul>
             </div>
@@ -83,26 +72,12 @@
             <iframe id="iFrame" name="fm" src="index-body.html" frameborder="0"></iframe>
         </div>
 
-        <div class="layui-footer" style="left: 0;">
-            <!-- 底部固定区域 -->
-            ©stars
+        <!-- 底部固定区域 -->
+        <div class="layui-footer" style="left: 0; ">
+            发送 <input id="send_msg" type="text" value="01 00 0B 00 00 5A A0">
+            接收 <input id="res_msg" type="text" value="01 00 0B 00 00 5A A0">
         </div>
-
     </div>
-    <!-- //添加设备表单
-    <script type="text/html" id="add_device_tpl">
-        <form class="layui-form" id="add_device_form">
-            <p style="text-align: center;color: rgb(255,87,34);">api_key和device_id从onenet平台获取</p>
-            <div class="layui-form-item">
-                <input type="text" name="api_key" required  lay-verify="required" placeholder="api_key" autocomplete="off" class="layui-input">
-                <input type="text" name="device_id" required  lay-verify="required" placeholder="device_id" autocomplete="off" class="layui-input">
-                <input type="text" name="device_name" required  lay-verify="required" placeholder="设备名称(自定义)" autocomplete="off" class="layui-input">
-            </div>
-            <div class="layui-form-item">
-                <button class="layui-btn layui-btn-primary layui-border-blue layui-btn-fluid  layui-btn-radius" lay-submit >确认添加</button>
-            </div>
-        </form>
-    </script> -->
 
     <script src="./layui/layui.js"></script>
     <script src="./js/jquery-3.6.0.min.js"></script>
@@ -127,12 +102,12 @@
                 //     $('#icon-turn').toggleClass("layui-icon-spread-left",500)
 
                 // }
-                
+
                 menuRight: function () {  // 右侧菜单事件
                     layer.open({
                         type: 1,
-                        title: '更多',
-                        content: '<div style="padding: 15px;">处理右侧面板的操作</div>',
+                        title: '基础配置',
+                        content: '<div style="padding: 15px;">ip,端口,用户，控制模式</div>',
                         area: ['260px', '100%'],
                         offset: 'rt', // 右上角
                         anim: 'slideLeft', // 从右侧抽屉滑出

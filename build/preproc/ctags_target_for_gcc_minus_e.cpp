@@ -108,7 +108,6 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
         // USE_SERIAL.println(calculatedCRC);
         if (receivedCRC == calculatedCRC)
         {
-            // CRC matches, send the data
             for (size_t i = 0; i < dataIndex; i++)
             {
                 Serial.write((uint8_t)data[i]);
