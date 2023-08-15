@@ -109,6 +109,8 @@ $('#tool_icon_ok').click(
             const crcValue = CRC16(hexArray);
             // 使用正则表达式进行分隔和添加空格
             $('#tool_input_send_msg').val((hexString + crcValue.toString(16).toUpperCase().padStart(4, '0')).replace(/(.{2})/g, "$1 "));
+            setTimeout(function () { $('#tool_icon_ok').addClass('layui-anim-scale'); });
+            $('#tool_icon_ok').removeClass('layui-anim-scale');
         }
         else {
             layui.use(function () {
@@ -123,8 +125,10 @@ $('#tool_icon_send').click(
     function () {
         const pattern = /^([0-9A-Fa-f]{2}\s*)+$/; // 匹配模式
         const inputValue = $('#tool_input_send_msg').val();
-        if (pattern.test(inputValue) && inputValue.replace(/\s/g, "").length === 14) { //判断是否为7字节十六进制数
+        if (pattern.test(inputValue) && inputValue.replace(/\s/g, "").length === 14 || pattern.test(inputValue) && inputValue.replace(/\s/g, "").length === 10) { //判断是否为7字节十六进制数
             parent.sendmsg($('#tool_input_send_msg').val());
+            setTimeout(function () { $('#tool_icon_send').addClass('layui-anim-scale'); });
+            $('#tool_icon_send').removeClass('layui-anim-scale');
         } else {
             layui.use(function () {
                 var layer = layui.layer;

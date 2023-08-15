@@ -1,3 +1,59 @@
+layui.use(['element', 'layer', 'util'], function () {
+    var element = layui.element
+        , layer = layui.layer
+        , util = layui.util
+        , $ = layui.$
+        , dropdown = layui.dropdown;
+
+    dropdown.render({
+        elem: '.demo-dropdown-base', // 绑定元素选择器，此处指向 class 可同时绑定多个元素
+        data: [{
+            title: '位置环',
+            id: 100,
+            cmd: "01 80 21 00 01"
+        }, {
+            title: '速度环',
+            id: 101,
+            cmd: "01 80 21 00 02"
+        }, {
+            title: '力矩环',
+            id: 102,
+            cmd: "01 80 21 00 03"
+        }],
+        click: function (obj) {
+            this.elem.find('span').text(obj.title);
+            sendmsg(obj.cmd);
+        }
+    });
+    //头部事件
+    util.event('lay-header-event', {
+        //左侧菜单事件
+        // menuLeft: function (othis) {
+        //     // layer.msg('展开左侧菜单的操作', { icon: 0 });
+        //     $('.layui-side').css('display', 'none')
+        //     $('.layui-body').css('left', '0')
+        //     $('.layui-layout-left').css('left', '0')
+        //     $('#icon-turn').toggleClass("layui-icon-shrink-right",500)
+        //     $('#icon-turn').toggleClass("layui-icon-spread-left",500)
+
+        // }
+
+        menuRight: function () {  // 右侧菜单事件
+            layer.open({
+                type: 1,
+                title: '基础配置',
+                content: '<div style="padding: 15px;">ip,端口,用户，控制模式</div>',
+                area: ['260px', '100%'],
+                offset: 'rt', // 右上角
+                anim: 'slideLeft', // 从右侧抽屉滑出
+                shadeClose: true,
+                scrollbar: false
+            });
+        }
+    });
+
+});
+
 // CRC16 校验表
 const crc_ta = [
     0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
@@ -94,8 +150,13 @@ function sendmsg(send_msg) {
     const integerArray = result.split(' ').map(hex => parseInt(hex, 16));
     const crcValue = CRC16(integerArray);
     let send_msg_crc = crcValue.toString(16).toUpperCase().padStart(4, '0').replace(/(.{2})/g, "$1 ")
-    $("#send_msg").val(result + " " +send_msg_crc);
-    console.log("下发： " + result + " " +send_msg_crc);
+    $("#send_msg").val(result + " " + send_msg_crc);
+    console.log("下发： " + result + " " + send_msg_crc);
+
+
+    // 给目标元素追加「往下滑入」的动画
+    setTimeout(function () { $('#send_msg').addClass('layui-anim-fadein'); });
+    $('#send_msg').removeClass('layui-anim-fadein');
     //connection.send(document.getElementById("msg").value);
 }
 // function renderAvatar(user) {
@@ -189,5 +250,13 @@ IframeOnClick.track(document.getElementById("iFrame"), function () {
 
 
 $('#stop').click(function () {
+    sendmsg('01 C0 04 55 AA 20 DF');
     layer.msg('关使能')
+
+    // 在子页面中调用函数
+    document.getElementById('iFrame').contentWindow.updateValue(182, 88);
+
+    // 给目标元素追加「往下滑入」的动画
+    setTimeout(function () { $('#stop').addClass('layui-anim-scale'); });
+    $('#stop').removeClass('layui-anim-scale');
 })
