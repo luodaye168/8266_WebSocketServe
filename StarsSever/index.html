@@ -17,13 +17,19 @@
             <!-- 头部区域（可配合layui 已有的水平导航） -->
             <ul class="layui-nav layui-layout-left ">
                 <!-- 移动端显示 -->
-                <li class="layui-nav-item layui-hide-sm" lay-header-event="menuLeft">
+                <li class="layui-nav-item layui-hide-sm">
                     <!-- <i class="layui-icon layui-icon-spread-left"></i> -->
-                    <i id="icon-turn" class="layui-icon layui-icon-spread-left" style="font-size: 25px;"></i>
+                    <i id="icon-turn" class="layui-icon layui-icon-spread-left" style="font-size: 25px;"
+                        lay-header-event="menuLeft"></i>
                 </li>
             </ul>
 
             <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item " lay-header-event="ctrl_mode" lay-unselect>
+                    <i id="wifi" class="layui-icon layui-icon-wifi layui-anim "
+                        style=" font-size: 25px; color: #f80505;"></i>
+                </li>
+                <span>&nbsp;&nbsp;&nbsp;</span>
                 <li class="layui-nav-item " lay-header-event="ctrl_mode" lay-unselect>
                     <button class="layui-btn demo-dropdown-base">
                         <span style="color: #e6ecf1;">控制模式</span>
@@ -88,6 +94,11 @@
                 readonly="readonly" style="width: 150px; padding: 0 5px;">
             <span class="layui-hide-xs">接收 </span><input id="res_msg" type="text" value="01 00 0B 00 00 5A A0"
                 readonly="readonly" style="width: 150px; padding: 0 5px; color: #16baaa;">
+                
+            <span class="layui-hide-xs">发送帧数</span> <input id="input_send_count" class="layui-anim" type="text" value="0"
+                readonly="readonly" style="width: 60px; padding: 0 5px;">
+            <span class="layui-hide-xs">接收帧数 </span><input id="input_res_count" type="text" value="0"
+                readonly="readonly" style="width: 60px; padding: 0 5px; color: #16baaa;">
         </div>
     </div>
 

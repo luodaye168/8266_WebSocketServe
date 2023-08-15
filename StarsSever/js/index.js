@@ -1,3 +1,96 @@
+let ip = "192.168.4.1"
+let port = "81";
+var connection_num = 1
+var send_count = 1
+var res_count = 1
+var connection_flag = true //打开WiFi连接
+var CAN1_RX_DATA = [];
+var connection = new WebSocket('ws://192.168.4.1:81/', ['arduino']);
+connection.onopen = function () {
+    connection.send('Connect ' + new Date());
+};
+connection.onclose = function () {
+    layer.msg("连接断开。。。");
+    // setTimeout(function () {
+        // connection = new WebSocket('ws://192.168.4.1:81/', ['arduino']);
+    // }, 5000); // 5 seconds
+};
+
+connection.onerror = function (error) {
+    console.log('WebSocket Error ', error);
+    layer.msg("连接出错，检查网络连接、ip：" + ip + " 端口：" + port + "、wifi连接是否打开");
+};
+connection.onmessage = function (e) {
+    // if (e.data == "Connected") document.getElementById("lj").value = "连接成功";
+
+    // 将接收到的字符串转换为16进制格式
+    var hexData = '';
+    for (var i = 0, j = 0; i < e.data.length; i += 2, j++) {
+        var hexByte = e.data.substr(i, 2);
+        CAN1_RX_DATA[j] = hexByte;
+        hexData += hexByte + ' ';
+    }
+    $("#res_msg").val(hexData);
+    $("#input_res_count").val(res_count++);
+};
+
+
+setInterval(function () {
+    var wifi_status = connection.readyState
+    // console.log(wifi_status);
+    const $wifiIcon = $("#wifi");
+    switch (wifi_status) {
+        case WebSocket.CONNECTING://0
+            layer.msg("正在尝试第" + connection_num++ + "次重连 ");
+            $wifiIcon.css("color", "#ffb800"); //黄
+            $wifiIcon.addClass("layui-anim-scalesmall-spring layui-anim-loop");
+            break;
+        case WebSocket.OPEN://1
+            connection_num = 0
+            $wifiIcon.css("color", "#07f52a"); //绿
+            $wifiIcon.removeClass("layui-anim-scalesmall-spring layui-anim-loop");
+            break;
+        case WebSocket.CLOSED://3
+            //connection = new WebSocket('ws://192.168.4.1:81/', ['arduino']);
+            $wifiIcon.css("color", "#f80505"); //红
+            $wifiIcon.removeClass("layui-anim-scalesmall-spring layui-anim-loop");
+            // location.reload();
+            connection_flag ? window.location.reload() : $wifiIcon.css("color", "#ffb800"); //黄;
+            break;
+        default:
+            $wifiIcon.css("color", "#f80505"); //红
+            $wifiIcon.removeClass("layui-anim-scalesmall-spring layui-anim-loop");
+            break;
+    }
+}, 3000);
+
+
+//发送文本框的内容
+function sendmsg(send_msg) {
+    // 移除字符串中的空格，并按空格分隔成数组
+    const stringArray = send_msg.replace(/\s/g, '').match(/.{2}/g);
+    // 取前5个元素
+    const extractedData = stringArray.slice(0, 5);
+    // 构建新的字符串并添加空格
+    const result = extractedData.join(' ');
+    const integerArray = result.split(' ').map(hex => parseInt(hex, 16));
+    const crcValue = CRC16(integerArray);
+    let send_msg_crc = crcValue.toString(16).toUpperCase().padStart(4, '0').replace(/(.{2})/g, "$1 ")
+    $("#send_msg").val(result + " " + send_msg_crc);
+    console.log("下发： " + result + " " + send_msg_crc);
+
+
+    // 给目标元素追加「往下滑入」的动画
+    setTimeout(function () { $('#send_msg').addClass('layui-anim-fadein'); });
+    $('#send_msg').removeClass('layui-anim-fadein');
+    connection.send(result + " " + send_msg_crc);
+    $("#input_send_count").val(send_count++);
+}
+
+
+
+
+
 layui.use(['element', 'layer', 'util'], function () {
     var element = layui.element
         , layer = layui.layer
@@ -28,15 +121,28 @@ layui.use(['element', 'layer', 'util'], function () {
     //头部事件
     util.event('lay-header-event', {
         //左侧菜单事件
-        // menuLeft: function (othis) {
-        //     // layer.msg('展开左侧菜单的操作', { icon: 0 });
-        //     $('.layui-side').css('display', 'none')
-        //     $('.layui-body').css('left', '0')
-        //     $('.layui-layout-left').css('left', '0')
-        //     $('#icon-turn').toggleClass("layui-icon-shrink-right",500)
-        //     $('#icon-turn').toggleClass("layui-icon-spread-left",500)
+        menuLeft: function (othis) {
+            if ($('.layui-hide-sm').css('display') == 'inline-block') {
 
-        // }
+                $(this).toggleClass("layui-icon-shrink-right ")
+                $(this).toggleClass("layui-icon-spread-left")
+                if ($(this).hasClass("layui-icon-shrink-right")) {
+                    $('.layui-side').css({ 'left': '0', 'transition': 'left 0.5s' })
+                    $('.layui-logo').css({ 'left': '0', 'transition': 'left 0.5s' })
+                    // $('.layui-body').css({ 'left': '200px', 'transition': 'left 0.5s' })
+                    $('.layui-layout-left').css({ 'left': '200px', 'transition': 'left 0.5s' })
+                    // $('.layui-footer').css({ 'left': '200px', 'transition': 'left 0.5s' })
+                }
+                else {
+                    $('.layui-side').css({ 'left': '-200px', 'transition': 'left 0.5s' })
+                    $('.layui-logo').css({ 'left': '-200px', 'transition': 'left 0.5s' })
+                    $('.layui-body').css({ 'left': '0', 'transition': 'left 0.5s' })
+                    $('.layui-layout-left').css({ 'left': '0', 'transition': 'left 0.5s' })
+                    // $('.layui-footer').css({ 'left': '0', 'transition': 'left 0.5s' })
+                }
+            }
+
+        },
 
         menuRight: function () {  // 右侧菜单事件
             layer.open({
@@ -101,104 +207,30 @@ function CRC16(data) {
     return crc & 0xFFFF;
 }
 
-$(function () {
-    var user_id = ''
-    getUserInfo()
-})
 
-function getUserInfo() {
-    console.log("getUserInfo()");
-    // var CAN1_RX_DATA = [];
-    // var connection = new WebSocket('ws://192.168.4.1:81/', ['arduino']);
-    // connection.onopen = function () { connection.send('Connect ' + new Date()); };
-    // connection.onclose = function () { document.getElementById("lj").value = "连接断开"; }
-    // connection.onerror = function (error) {
-    //     console.log('WebSocket Error ', error);
-    //     document.getElementById("lj").value = "连接失败";
-    // };
-    // connection.onmessage = function (e) {
-    //     if (e.data == "Connected") document.getElementById("lj").value = "连接成功";
-
-    //     // 将接收到的字符串转换为16进制格式
-    //     var hexData = '';
-    //     for (var i = 0, j = 0; i < e.data.length; i += 2, j++) {
-    //         var hexByte = e.data.substr(i, 2);
-    //         CAN1_RX_DATA[j] = hexByte;
-    //         hexData += hexByte + ' ';
-    //     }
-    //     console.log('Server (Hex):', hexData);
-
-    //     // for (var i = 0; i < 7; console.log(CAN1_RX_DATA[i++]));
-
-    //     //CAN1_RX_DATA[3]，CAN1_RX_DATA[4]合并成整数
-    //     var result = parseInt(CAN1_RX_DATA[3], 16) * 256 + parseInt(CAN1_RX_DATA[4], 16);
-
-    //     // 输出结果，这里使用toString(10)将结果转换成十进制字符串
-    //     document.getElementById("Server").value += result.toString(10) + "\r\n";
-    // };
-
-
-}
-//发送文本框的内容
-function sendmsg(send_msg) {
-    // 移除字符串中的空格，并按空格分隔成数组
-    const stringArray = send_msg.replace(/\s/g, '').match(/.{2}/g);
-    // 取前5个元素
-    const extractedData = stringArray.slice(0, 5);
-    // 构建新的字符串并添加空格
-    const result = extractedData.join(' ');
-    const integerArray = result.split(' ').map(hex => parseInt(hex, 16));
-    const crcValue = CRC16(integerArray);
-    let send_msg_crc = crcValue.toString(16).toUpperCase().padStart(4, '0').replace(/(.{2})/g, "$1 ")
-    $("#send_msg").val(result + " " + send_msg_crc);
-    console.log("下发： " + result + " " + send_msg_crc);
-
-
-    // 给目标元素追加「往下滑入」的动画
-    setTimeout(function () { $('#send_msg').addClass('layui-anim-fadein'); });
-    $('#send_msg').removeClass('layui-anim-fadein');
-    //connection.send(document.getElementById("msg").value);
-}
-// function renderAvatar(user) {
-//     var name = user.username
-//     $('.welcome').html(name) //'欢迎&nbsp;&nbsp' +
-//     if (user.user_pic !== null) {
-//         $('.layui-nav-img').attr('src', user.user_pic).show()
-//         $('.text-avatar').hide()
-//     } else {
-//         $('layui-nav-img').hide()
-//         var first = name[0].toUpperCase()
-//         $('.text-avatar').html(first).show()
-
-//     }
-// }
-
-// $('#userinfo').click(function () {
-//     location.href = './user/user_info.html'
-// })
 
 //展开、收回侧边栏
-$('#icon-turn').click(function () {
-    if ($('.layui-hide-sm').css('display') == 'inline-block') {
+// $('#icon-turn').click(function () {
+// if ($('.layui-hide-sm').css('display') == 'inline-block') {
 
-        $(this).toggleClass("layui-icon-shrink-right ")
-        $(this).toggleClass("layui-icon-spread-left")
-        if ($(this).hasClass("layui-icon-shrink-right")) {
-            $('.layui-side').css({ 'left': '0', 'transition': 'left 0.5s' })
-            $('.layui-logo').css({ 'left': '0', 'transition': 'left 0.5s' })
-            // $('.layui-body').css({ 'left': '200px', 'transition': 'left 0.5s' })
-            $('.layui-layout-left').css({ 'left': '200px', 'transition': 'left 0.5s' })
-            // $('.layui-footer').css({ 'left': '200px', 'transition': 'left 0.5s' })
-        }
-        else {
-            $('.layui-side').css({ 'left': '-200px', 'transition': 'left 0.5s' })
-            $('.layui-logo').css({ 'left': '-200px', 'transition': 'left 0.5s' })
-            $('.layui-body').css({ 'left': '0', 'transition': 'left 0.5s' })
-            $('.layui-layout-left').css({ 'left': '0', 'transition': 'left 0.5s' })
-            // $('.layui-footer').css({ 'left': '0', 'transition': 'left 0.5s' })
-        }
-    }
-})
+//     $(this).toggleClass("layui-icon-shrink-right ")
+//     $(this).toggleClass("layui-icon-spread-left")
+//     if ($(this).hasClass("layui-icon-shrink-right")) {
+//         $('.layui-side').css({ 'left': '0', 'transition': 'left 0.5s' })
+//         $('.layui-logo').css({ 'left': '0', 'transition': 'left 0.5s' })
+//         // $('.layui-body').css({ 'left': '200px', 'transition': 'left 0.5s' })
+//         $('.layui-layout-left').css({ 'left': '200px', 'transition': 'left 0.5s' })
+//         // $('.layui-footer').css({ 'left': '200px', 'transition': 'left 0.5s' })
+//     }
+//     else {
+//         $('.layui-side').css({ 'left': '-200px', 'transition': 'left 0.5s' })
+//         $('.layui-logo').css({ 'left': '-200px', 'transition': 'left 0.5s' })
+//         $('.layui-body').css({ 'left': '0', 'transition': 'left 0.5s' })
+//         $('.layui-layout-left').css({ 'left': '0', 'transition': 'left 0.5s' })
+//         // $('.layui-footer').css({ 'left': '0', 'transition': 'left 0.5s' })
+//     }
+// }
+// })
 
 // iframe点击事件，点击主体关闭侧边栏
 var IframeOnClick = {
@@ -221,7 +253,7 @@ var IframeOnClick = {
         if (document.activeElement) {
             var activeElement = document.activeElement;
             for (var i in this.iframes) {
-                if (activeElement === this.iframes[i].element) { // user is in this Iframe  
+                if (activeElement === this.iframes[i].element) {
                     if (this.iframes[i].hasTracked == false) {
                         this.iframes[i].cb.apply(window, []);
                         this.iframes[i].hasTracked = true;
@@ -253,7 +285,7 @@ $('#stop').click(function () {
     sendmsg('01 C0 04 55 AA 20 DF');
     layer.msg('关使能')
 
-    // 在子页面中调用函数
+    // 在父页面中调用子页面函数
     document.getElementById('iFrame').contentWindow.updateValue(182, 88);
 
     // 给目标元素追加「往下滑入」的动画
