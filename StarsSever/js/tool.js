@@ -14,7 +14,16 @@ layui.use(function () {
                 cmd: "C004",
                 data: "55AA"
             },
-
+            {
+                title: '0001 查询指令',
+                cmd: "0001",
+                data: "0000"
+            },
+            {
+                title: '8001 修改指令',
+                cmd: "8001",
+                data: "0001"
+            },
             ],
             click: function (obj) {
                 $("#tool_input_cmd").val(obj.cmd);

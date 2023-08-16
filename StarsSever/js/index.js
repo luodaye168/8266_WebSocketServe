@@ -1,10 +1,12 @@
 let ip = "192.168.4.1"
 let port = "81";
-var connection_num = 1
-var send_count = 1
-var res_count = 1
-var connection_flag = true //打开WiFi连接
+let pa_id = 1
+var connection_num = 1  //重连次数
+var send_count = 1      //发送帧数计数
+var res_count = 1       //接收帧数计数
+var connection_flag = true //true打开WiFi断线重连
 var CAN1_RX_DATA = [];
+var CAN1_TX_DATA = [];
 var connection = new WebSocket('ws://192.168.4.1:81/', ['arduino']);
 connection.onopen = function () {
     connection.send('Connect ' + new Date());
@@ -12,7 +14,7 @@ connection.onopen = function () {
 connection.onclose = function () {
     layer.msg("连接断开。。。");
     // setTimeout(function () {
-        // connection = new WebSocket('ws://192.168.4.1:81/', ['arduino']);
+    // connection = new WebSocket('ws://192.168.4.1:81/', ['arduino']);
     // }, 5000); // 5 seconds
 };
 
@@ -27,11 +29,33 @@ connection.onmessage = function (e) {
     var hexData = '';
     for (var i = 0, j = 0; i < e.data.length; i += 2, j++) {
         var hexByte = e.data.substr(i, 2);
-        CAN1_RX_DATA[j] = hexByte;
+        // CAN1_RX_DATA[j] = hexByte;
         hexData += hexByte + ' ';
     }
-    $("#res_msg").val(hexData);
-    $("#input_res_count").val(res_count++);
+    console.log('Server (Hex):', hexData);
+
+    // 移除字符串中的空格，并按空格分隔成数组
+    const stringArray = hexData.replace(/\s/g, '').match(/.{2}/g);
+    // 取前5个元素
+    const extractedData = stringArray.slice(0, 5);
+    const res_crc = stringArray.slice(5, 7).join(' ');
+    // 将 res_crc 解析为整数
+    const parsed_res_crc = parseInt(res_crc.replace(/\s/g, ''), 16);
+    // 构建新的字符串并添加空格
+    const result = extractedData.join(' ');
+    CAN1_RX_DATA = result.split(' ').map(hex => parseInt(hex, 16));
+    const crcValue = CRC16(CAN1_RX_DATA);
+    // var res_msg_crc = crcValue.toString(16).toUpperCase().padStart(4, '0').replace(/(.{2})/g, "$1 ")
+
+    if (crcValue === parsed_res_crc) {
+        // console.log("接收的数据crc校验成功");
+        $("#res_msg").val(hexData);
+        $("#input_res_count").val(res_count++);
+    }
+    else {
+        console.log("接收的数据crc校验错误");
+    }
+
 };
 
 
@@ -73,16 +97,16 @@ function sendmsg(send_msg) {
     const extractedData = stringArray.slice(0, 5);
     // 构建新的字符串并添加空格
     const result = extractedData.join(' ');
-    const integerArray = result.split(' ').map(hex => parseInt(hex, 16));
-    const crcValue = CRC16(integerArray);
+    CAN1_TX_DATA = result.split(' ').map(hex => parseInt(hex, 16));
+    const crcValue = CRC16(CAN1_TX_DATA);
     let send_msg_crc = crcValue.toString(16).toUpperCase().padStart(4, '0').replace(/(.{2})/g, "$1 ")
     $("#send_msg").val(result + " " + send_msg_crc);
     console.log("下发： " + result + " " + send_msg_crc);
 
 
     // 给目标元素追加「往下滑入」的动画
-    setTimeout(function () { $('#send_msg').addClass('layui-anim-fadein'); });
-    $('#send_msg').removeClass('layui-anim-fadein');
+    // setTimeout(function () { $('#send_msg').addClass('layui-anim-fadein'); });
+    // $('#send_msg').removeClass('layui-anim-fadein');
     connection.send(result + " " + send_msg_crc);
     $("#input_send_count").val(send_count++);
 }
@@ -282,7 +306,16 @@ IframeOnClick.track(document.getElementById("iFrame"), function () {
 
 
 $('#stop').click(function () {
-    sendmsg('01 C0 04 55 AA 20 DF');
+    // sendmsg('01 C0 04 55 AA 20 DF');
+    // sendWithRetries('01 C0 04 55 AA 20 DF');
+    sendMessagesWithDelay(); // 启动发送帧数据的过程
+    // 发送数据并检查回复
+    // sendWithRetries();
+    // sendMessagesWithDelay();
+    // for (var i = 1; i < 31; i++) {
+    //     sendmsg(id.toString(16).padStart(2, '0') + " 00 " + i.toString(16).padStart(2, '0') + " 00 00");
+    // }
+
     layer.msg('关使能')
 
     // 在父页面中调用子页面函数
@@ -292,3 +325,70 @@ $('#stop').click(function () {
     setTimeout(function () { $('#stop').addClass('layui-anim-scale'); });
     $('#stop').removeClass('layui-anim-scale');
 })
+
+
+/////////////////////////////验证通讯有效性///////////////////////////////////////////////
+var sendAttempts = 0;   //当前重发次数
+var maxSendAttempts = 10; //最大重发次数
+var currentFrameIndex = 1;
+// 发送数据
+function sendWithRetries(sendData) {
+    var sendAttempts = 0;
+
+    function attemptToSend() {
+        if (sendAttempts < maxSendAttempts) {
+            sendmsg(sendData);
+            sendAttempts++;
+            setTimeout(function () {
+                checkReceivedData(sendData, attemptToSend);
+            }, 50); // 等待200毫秒后检查接收数据
+        } else {
+            console.log("通讯失败");
+            $("#can_flag").css("background", "#f80505");
+            currentFrameIndex++; // 发送下一帧数据
+            sendMessagesWithDelay();
+        }
+    }
+
+    attemptToSend();
+}
+// 检查接收到的数据
+function checkReceivedData(sendData, retryCallback) {
+    if (CAN1_RX_DATA.length >= 3) {
+        var RxData = CAN1_RX_DATA.slice(0, 3).join(' ');
+        var TxData = CAN1_TX_DATA.slice(0, 3).join(' ');
+        if (RxData === TxData) {
+            // console.log("通讯有效");
+            $("#can_flag").css("background", "#07f52a");
+            CAN1_RX_DATA = []; // 重置接收数据数组
+            currentFrameIndex++; // 发送下一帧数据
+            sendMessagesWithDelay();
+        } else {
+            retryCallback();
+        }
+    } else {
+        retryCallback();
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////轮询////////////////////////////////////////////////
+
+function sendMessagesWithDelay() {
+    if (currentFrameIndex < 31) { // 这里可以根据需要修改总帧数
+        var message = pa_id.toString(16).padStart(2, '0') + " 00 " + currentFrameIndex.toString(16).padStart(2, '0') + " 00 00";
+        sendWithRetries(message);
+    } else {
+        console.log("所有帧数据已发送完毕");
+        currentFrameIndex = 1;
+    }
+}
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// setInterval(function () { //调用查询函数
+//     sendMessagesWithDelay();
+// }, 1500)
+//////////////////////////////////////////////////////////////////////////////////////////////
