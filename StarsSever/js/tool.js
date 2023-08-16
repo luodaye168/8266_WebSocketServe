@@ -1,3 +1,11 @@
+// 开始计时
+console.time("pageLoadTime");
+
+// 等待整个文档加载完毕
+window.addEventListener("load", function() {
+    // 结束计时并输出页面加载时间
+    console.timeEnd("pageLoadTime");
+});
 layui.use(function () {
     var dropdown = layui.dropdown;
     // 绑定文字
@@ -89,7 +97,6 @@ const crc_ta = [
     0x7c26, 0x6c07, 0x5c64, 0x4c45, 0x3ca2, 0x2c83, 0x1ce0, 0x0cc1,
     0xef1f, 0xff3e, 0xcf5d, 0xdf7c, 0xaf9b, 0xbfba, 0x8fd9, 0x9ff8,
     0x6e17, 0x7e36, 0x4e55, 0x5e74, 0x2e93, 0x3eb2, 0x0ed1, 0x1ef0
-    // ... 剩余部分省略
 ];
 
 // 计算 CRC16 校验位

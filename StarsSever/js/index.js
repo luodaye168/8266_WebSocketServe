@@ -49,6 +49,7 @@ connection.onmessage = function (e) {
 
     if (crcValue === parsed_res_crc) {
         // console.log("接收的数据crc校验成功");
+        document.getElementById('iFrame').contentWindow.updateValue(CAN1_RX_DATA[1] * 256 + CAN1_RX_DATA[2], CAN1_RX_DATA[3] * 256 + CAN1_RX_DATA[4]);
         $("#res_msg").val(hexData);
         $("#input_res_count").val(res_count++);
     }
@@ -345,6 +346,7 @@ function sendWithRetries(sendData) {
         } else {
             console.log("通讯失败");
             $("#can_flag").css("background", "#f80505");
+            $("#res_msg").css("color", "#f80505");
             currentFrameIndex++; // 发送下一帧数据
             sendMessagesWithDelay();
         }
@@ -359,7 +361,10 @@ function checkReceivedData(sendData, retryCallback) {
         var TxData = CAN1_TX_DATA.slice(0, 3).join(' ');
         if (RxData === TxData) {
             // console.log("通讯有效");
+            // 在父页面中调用子页面函数
+            // document.getElementById('iFrame').contentWindow.updateValue(CAN1_RX_DATA[1] * 256 + CAN1_RX_DATA[2], CAN1_RX_DATA[3] * 256 + CAN1_RX_DATA[4]);
             $("#can_flag").css("background", "#07f52a");
+            $("#res_msg").css("color", "#000000");
             CAN1_RX_DATA = []; // 重置接收数据数组
             currentFrameIndex++; // 发送下一帧数据
             sendMessagesWithDelay();
@@ -390,5 +395,5 @@ function delay(ms) {
 
 // setInterval(function () { //调用查询函数
 //     sendMessagesWithDelay();
-// }, 1500)
+// }, 2500)
 //////////////////////////////////////////////////////////////////////////////////////////////
