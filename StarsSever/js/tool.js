@@ -143,7 +143,7 @@ $('#tool_icon_send').click(
         const inputValue = $('#tool_input_send_msg').val();
         if (pattern.test(inputValue) && inputValue.replace(/\s/g, "").length === 14 || pattern.test(inputValue) && inputValue.replace(/\s/g, "").length === 10) { //判断是否为7字节十六进制数
             //在子页面调用父页面函数
-            parent.sendmsg($('#tool_input_send_msg').val());
+            parent.sendWithRetries($('#tool_input_send_msg').val());
             setTimeout(function () { $('#tool_icon_send').addClass('layui-anim-scale'); });
             $('#tool_icon_send').removeClass('layui-anim-scale');
         } else {
@@ -154,3 +154,5 @@ $('#tool_icon_send').click(
         }
     }
 )
+
+function updateValue(){}

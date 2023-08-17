@@ -1,6 +1,6 @@
 let ip = "192.168.4.1"
 let port = "81";
-let pa_id = 1
+let addr = 1
 var connection_num = 1  //重连次数
 var send_count = 1      //发送帧数计数
 var res_count = 1       //接收帧数计数
@@ -140,7 +140,7 @@ layui.use(['element', 'layer', 'util'], function () {
         }],
         click: function (obj) {
             this.elem.find('span').text(obj.title);
-            sendmsg(obj.cmd);
+            sendWithRetries(obj.cmd);
         }
     });
     //头部事件
@@ -309,10 +309,10 @@ IframeOnClick.track(document.getElementById("iFrame"), function () {
 $('#stop').click(function () {
     // sendmsg('01 C0 04 55 AA 20 DF');
     // sendWithRetries('01 C0 04 55 AA 20 DF');
-    sendMessagesWithDelay(); // 启动发送帧数据的过程
+    read_with_id(11); // 启动发送帧数据的过程
     // 发送数据并检查回复
     // sendWithRetries();
-    // sendMessagesWithDelay();
+    // read_with_id();
     // for (var i = 1; i < 31; i++) {
     //     sendmsg(id.toString(16).padStart(2, '0') + " 00 " + i.toString(16).padStart(2, '0') + " 00 00");
     // }
@@ -331,31 +331,27 @@ $('#stop').click(function () {
 /////////////////////////////验证通讯有效性///////////////////////////////////////////////
 var sendAttempts = 0;   //当前重发次数
 var maxSendAttempts = 10; //最大重发次数
-var currentFrameIndex = 1;
+var currentFrameIndex = 256;
 // 发送数据
 function sendWithRetries(sendData) {
     var sendAttempts = 0;
-
     function attemptToSend() {
         if (sendAttempts < maxSendAttempts) {
             sendmsg(sendData);
             sendAttempts++;
             setTimeout(function () {
-                checkReceivedData(sendData, attemptToSend);
+                checkReceivedData(attemptToSend);
             }, 50); // 等待200毫秒后检查接收数据
         } else {
             console.log("通讯失败");
             $("#can_flag").css("background", "#f80505");
             $("#res_msg").css("color", "#f80505");
-            currentFrameIndex++; // 发送下一帧数据
-            sendMessagesWithDelay();
         }
     }
-
     attemptToSend();
 }
 // 检查接收到的数据
-function checkReceivedData(sendData, retryCallback) {
+function checkReceivedData(retryCallback) {
     if (CAN1_RX_DATA.length >= 3) {
         var RxData = CAN1_RX_DATA.slice(0, 3).join(' ');
         var TxData = CAN1_TX_DATA.slice(0, 3).join(' ');
@@ -366,8 +362,6 @@ function checkReceivedData(sendData, retryCallback) {
             $("#can_flag").css("background", "#07f52a");
             $("#res_msg").css("color", "#000000");
             CAN1_RX_DATA = []; // 重置接收数据数组
-            currentFrameIndex++; // 发送下一帧数据
-            sendMessagesWithDelay();
         } else {
             retryCallback();
         }
@@ -380,20 +374,24 @@ function checkReceivedData(sendData, retryCallback) {
 
 ////////////////////////////////////////////轮询////////////////////////////////////////////////
 
-function sendMessagesWithDelay() {
-    if (currentFrameIndex < 31) { // 这里可以根据需要修改总帧数
-        var message = pa_id.toString(16).padStart(2, '0') + " 00 " + currentFrameIndex.toString(16).padStart(2, '0') + " 00 00";
-        sendWithRetries(message);
-    } else {
-        console.log("所有帧数据已发送完毕");
-        currentFrameIndex = 1;
-    }
-}
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+var idsToQuery = [11, 13, 15, 17, 5]; // 放入需要查询的 ID
+
+function read_with_id(pa_id) {
+    var message = addr.toString(16).padStart(2, '0') + pa_id.toString(16).padStart(4, '0') + " 00 00";
+    sendWithRetries(message);
 }
 
-// setInterval(function () { //调用查询函数
-//     sendMessagesWithDelay();
-// }, 2500)
+function write_with_id_val(pa_id, pa_val) {
+    var message = addr.toString(16).padStart(2, '0') + (pa_id + 32768).toString(16).padStart(4, '0') + parseInt(pa_val, 10).toString(16).padStart(4, '0');
+    sendWithRetries(message);
+}
+
+var currentIndex = 0; // 用于迭代查询的数组索引
+
+setInterval(function () {
+    read_with_id(idsToQuery[currentIndex++]);
+    if (currentIndex >= idsToQuery.length) {
+        currentIndex = 0; // 重新开始循环
+    }
+}, 100);
 //////////////////////////////////////////////////////////////////////////////////////////////
