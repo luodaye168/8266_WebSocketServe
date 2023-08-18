@@ -4,7 +4,7 @@ let addr = 1
 var connection_num = 1  //重连次数
 var send_count = 1      //发送帧数计数
 var res_count = 1       //接收帧数计数
-var connection_flag = true //true打开WiFi断线重连
+var connection_flag = false //true打开WiFi断线重连
 var CAN1_RX_DATA = [];
 var CAN1_TX_DATA = [];
 var connection = new WebSocket('ws://192.168.4.1:81/', ['arduino']);
@@ -388,10 +388,10 @@ function write_with_id_val(pa_id, pa_val) {
 
 var currentIndex = 0; // 用于迭代查询的数组索引
 
-setInterval(function () {
-    read_with_id(idsToQuery[currentIndex++]);
-    if (currentIndex >= idsToQuery.length) {
-        currentIndex = 0; // 重新开始循环
-    }
-}, 100);
+// setInterval(function () {
+//     read_with_id(idsToQuery[currentIndex++]);
+//     if (currentIndex >= idsToQuery.length) {
+//         currentIndex = 0; // 重新开始循环
+//     }
+// }, 100);
 //////////////////////////////////////////////////////////////////////////////////////////////

@@ -49,9 +49,7 @@ layui.use('table', function () {
         cols: [function () {
             var arr = [ //标题栏
                 { field: 'xu_hao', title: '序号', width: 73, sort: true, hide: true },
-                // { field: 'xu_hao', title: '序号', width: 73, sort: true },
                 { field: 'id', title: 'ID号', width: 80, hide: true, sort: true },
-                // { field: 'id', title: 'ID号', width: 60 },
                 { field: 'can_shu_hao', title: '参数号', width: 78 },
                 { field: 'parameter_name', title: '参数名称', minWidth: 100, maxWidth: 300 },
                 {
@@ -63,9 +61,9 @@ layui.use('table', function () {
                     },
                 },
                 { field: 'unit', title: '单位', width: 50 },
-                { field: 'minvalue', title: '最小值', width: 75, hide: true  },
-                { field: 'maxvalue', title: '最大值', width: 75, hide: true  },
-                { field: 'explain', title: '参数说明', minWidth: 100}
+                { field: 'minvalue', title: '最小值', width: 75, hide: true },
+                { field: 'maxvalue', title: '最大值', width: 75, hide: true },
+                { field: 'explain', title: '参数说明', minWidth: 100 }
             ]
             // 初始化筛选状态
             var local = layui.data('table-filter-test'); // 获取对应的本地记录
