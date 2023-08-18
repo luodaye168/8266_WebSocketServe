@@ -55,7 +55,7 @@
             <div class="layui-side-scroll ">
                 <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
                 <ul class="layui-nav layui-nav-tree" lay-shrink="all">
-                    <li class="layui-nav-item layui-this"><a href="index-body.html" target="fm"><i
+                    <li class="layui-nav-item layui-this"><a href="home.html" target="fm"><i
                                 class="layui-icon layui-icon-home" style="font-size: 17px;"></i>&nbsp;首页</a>
                     </li>
 
@@ -84,11 +84,13 @@
         <div class="layui-body">
             <!-- 内容主体区域 -->
             <!-- <iframe id="iFrame" name="fm" src="index-body.html" frameborder="0"></iframe> -->
-            <iframe id="iFrame" name="fm" src="index-body.html" frameborder="0"></iframe>
+            <iframe id="iFrame" name="fm" src="home.html" frameborder="0"></iframe>
         </div>
 
         <!-- 底部固定区域 -->
         <div class="layui-footer " style="left: 0; ">
+            <span class="layui-hide-xs">IP:端口 </span> 
+            <span id="ipPort"></span> <!-- 这里将会显示 IP 地址和端口号 -->
             <input id="can_flag" type="text" value=" " readonly="readonly" style="width: 18px; background: #c2c2c2;">
             <span class="layui-hide-xs">发送</span> <input id="send_msg" class="layui-anim" type="text" value=""
                 readonly="readonly" style="width: 150px; padding: 0 5px;">
@@ -106,9 +108,6 @@
     <script src="./js/jquery-3.6.0.min.js"></script>
     <!-- <script src="./js/baseAPI.js"></script> -->
     <script src="./js/index.js"></script>
-    <script>
-
-    </script>
 </body>
 
 </html>

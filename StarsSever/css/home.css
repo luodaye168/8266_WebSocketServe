@@ -1,0 +1,15 @@
+body {
+    margin: 5px;
+    height: 100vh;
+    background-color: rgb(216, 228, 248);
+}
+
+.board {
+    width: 200px;
+    height: 200px;
+    /* min-width: 190px; */
+     /*设置外边框样式 */
+    /* border: 1px solid #A0A0A0; */
+    /* background: skyblue; */
+}
+

@@ -1,11 +1,11 @@
-// 开始计时
-console.time("pageLoadTime");
+// // 开始计时
+// console.time("pageLoadTime");
 
-// 等待整个文档加载完毕
-window.addEventListener("load", function() {
-    // 结束计时并输出页面加载时间
-    console.timeEnd("pageLoadTime");
-});
+// // 等待整个文档加载完毕
+// window.addEventListener("load", function() {
+//     // 结束计时并输出页面加载时间
+//     console.timeEnd("pageLoadTime");
+// });
 layui.use(function () {
     var dropdown = layui.dropdown;
     // 绑定文字

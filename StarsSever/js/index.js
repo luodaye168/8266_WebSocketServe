@@ -7,6 +7,14 @@ var res_count = 1       //接收帧数计数
 var connection_flag = false //true打开WiFi断线重连
 var CAN1_RX_DATA = [];
 var CAN1_TX_DATA = [];
+
+// 获取显示 IP 和端口的元素
+let ipPortElement = document.getElementById("ipPort");
+
+// 将 IP 地址和端口号插入到元素中
+ipPortElement.textContent = ip + ":" + port;
+
+
 var connection = new WebSocket('ws://192.168.4.1:81/', ['arduino']);
 connection.onopen = function () {
     connection.send('Connect ' + new Date());
@@ -52,6 +60,8 @@ connection.onmessage = function (e) {
         document.getElementById('iFrame').contentWindow.updateValue(CAN1_RX_DATA[1] * 256 + CAN1_RX_DATA[2], CAN1_RX_DATA[3] * 256 + CAN1_RX_DATA[4]);
         $("#res_msg").val(hexData);
         $("#input_res_count").val(res_count++);
+        if (CAN1_RX_DATA[1] * 256 + CAN1_RX_DATA[2] == 11)
+            document.getElementById('iFrame').contentWindow.updata_dlfk(CAN1_RX_DATA[3] * 256 + CAN1_RX_DATA[4]);
     }
     else {
         console.log("接收的数据crc校验错误");
