@@ -10,15 +10,67 @@
 </head>
 
 <body>
-    <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
-    <!-- <div class="layui-bg-gray" style="padding: 5px;"> -->
 
-    <div id="dlfk" class="board layui-col-lg2 layui-col-md3 layui-col-sm4 layui-col-xs6"></div>
+
+
+    <div class="layui-card layui-hide-xs" style="margin: 10px;">
+        <div class="layui-card-header">仪表盘</i></div>
+        <div class="layui-card-body">
+            <div class="layui-row layui-col-space1">
+                <div id="dlfk" class="board layui-col-lg2 layui-col-md2 layui-col-sm3 layui-col-xs6"></div>
+                <div id="njsd" class="board layui-col-lg2 layui-col-md2 layui-col-sm3 layui-col-xs6"></div>
+                <div id="zs" class="board layui-col-lg2 layui-col-md2 layui-col-sm3 layui-col-xs6"></div>
+                <div id="mxdy" class="board layui-col-lg2 layui-col-md2 layui-col-sm3 layui-col-xs6"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-card layui-col-lg4 layui-col-md5 layui-col-sm6 " style="margin: 10px;">
+        <!-- <div class="layui-card layui-col-lg4 layui-col-md5 layui-col-sm6 " style="margin: 10px;"> -->
+        <div class="layui-card-header" >
+            <button class="layui-btn demo-dropdown-base " lay-header-event="ctrl_mode">
+                <span style="color: #e6ecf1;">控制模式</span>
+            </button>
+        </div>
+        <div class="layui-card-body">
+            <div class="layui-row layui-col-space1">
+
+                <div id="div_dy">
+                    <i class="layui-icon layui-icon-chart" style="font-size: 25px; color: #000;"></i>
+                    <span id="span_dy_val">750.0v</span>
+                </div>
+
+                <div id="main_start" class="zoomable">
+                    <i class="layui-icon layui-icon-logout layui-anim" style="font-size: 25px; color: #a0a0a0;"></i>
+                    <span >开使能</span>
+                </div>
+
+                <div id="main_dl"></div>
+
+                <div id="main" style="height: 300px; width: 100%; background: #49c7e6;"></div>
+
+                <!-- <div id="slider_display_val" style="text-align: center;">0</div> -->
+                <div class="slider-container" style="margin-top: 15px;">
+                    <div class="min-label">-100</div>
+                    <div id="ID-slider-demo-maxmin"></div>
+                    <div class="max-label">100</div>
+                </div>
+
+                
+                <!-- <div id="dlfk" class="board layui-col-lg2 layui-col-md2 layui-col-sm3 layui-col-xs6"></div> -->
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-panel  layui-col-lg4 layui-col-md5 layui-col-sm6 layui-col-xs12">
+        <div style="padding: 32px;">面板任意内容</div>
+    </div>
+    <!-- <div id="dlfk" class="board layui-col-lg2 layui-col-md3 layui-col-sm4 layui-col-xs6"></div>
     <div id="njsd" class="board layui-col-lg2 layui-col-md3 layui-col-sm4 layui-col-xs6"></div>
     <div id="zs" class="board layui-col-lg2 layui-col-md3 layui-col-sm4 layui-col-xs6"></div>
-    <div id="mxdy" class="board layui-col-lg2 layui-col-md3 layui-col-sm4 layui-col-xs6"></div>
-    <!-- </div> -->
+    <div id="mxdy" class="board layui-col-lg2 layui-col-md3 layui-col-sm4 layui-col-xs6"></div> -->
 
+    <script src="./js/jquery-3.6.0.min.js"></script>
     <script src="./layui/layui.js"></script>
     <script src="./js/echarts.js"></script>
     <script src="./js/home.js"></script>

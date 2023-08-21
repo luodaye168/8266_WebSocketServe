@@ -25,17 +25,16 @@
             </ul>
 
             <ul class="layui-nav layui-layout-right">
-                <li class="layui-nav-item " lay-header-event="ctrl_mode" lay-unselect>
+                <li class="layui-nav-item " lay-unselect>
                     <i id="wifi" class="layui-icon layui-icon-wifi layui-anim "
                         style=" font-size: 25px; color: #f80505;"></i>
                 </li>
                 <span>&nbsp;&nbsp;&nbsp;</span>
-                <li class="layui-nav-item " lay-header-event="ctrl_mode" lay-unselect>
+                <!-- <li class="layui-nav-item " lay-header-event="ctrl_mode" lay-unselect>
                     <button class="layui-btn demo-dropdown-base">
                         <span style="color: #e6ecf1;">控制模式</span>
-                        <!-- <i class="layui-icon layui-icon-down layui-font-12"></i> -->
                     </button>
-                </li>
+                </li> -->
                 <span>&nbsp;&nbsp;&nbsp;</span>
                 <li class="layui-nav-item layui-anim" id="stop" lay-unselect>
                     <button class="layui-btn demo-dropdown-stop" style="background: #f80505;">
@@ -51,7 +50,7 @@
         </div>
 
         <!-- 侧边栏 -->
-        <div class="layui-side layui-bg-black ">
+        <div class="layui-side layui-bg-black " style="bottom: 45px;">
             <div class="layui-side-scroll ">
                 <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
                 <ul class="layui-nav layui-nav-tree" lay-shrink="all">
@@ -89,8 +88,8 @@
 
         <!-- 底部固定区域 -->
         <div class="layui-footer " style="left: 0; ">
-            <span class="layui-hide-xs">IP:端口 </span> 
-            <span id="ipPort"></span> <!-- 这里将会显示 IP 地址和端口号 -->
+            <!-- <span class="layui-hide-xs">ip:port </span>  -->
+            <span class="layui-hide-xs" id="ipPort"></span>&nbsp;&nbsp;&nbsp; <!-- 这里将会显示 IP 地址和端口号 -->
             <input id="can_flag" type="text" value=" " readonly="readonly" style="width: 18px; background: #c2c2c2;">
             <span class="layui-hide-xs">发送</span> <input id="send_msg" class="layui-anim" type="text" value=""
                 readonly="readonly" style="width: 150px; padding: 0 5px;">

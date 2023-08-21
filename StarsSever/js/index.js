@@ -1,6 +1,8 @@
-let ip = "192.168.4.1"
-let port = "81";
-let addr = 1
+// 在全局作用域中声明变量，从 localStorage读取变量，没有则赋值默认
+let ip = localStorage.getItem('ip') || "192.168.4.1";
+let port = localStorage.getItem('port') || "81";
+let addr = localStorage.getItem('addr') || 1;
+
 var connection_num = 1  //重连次数
 var send_count = 1      //发送帧数计数
 var res_count = 1       //接收帧数计数
@@ -8,14 +10,20 @@ var connection_flag = false //true打开WiFi断线重连
 var CAN1_RX_DATA = [];
 var CAN1_TX_DATA = [];
 
-// 获取显示 IP 和端口的元素
-let ipPortElement = document.getElementById("ipPort");
+function update_ipport() {
+    // 存储数据到 localStorage，刷新之后重新读取
+    localStorage.setItem('ip', ip);
+    localStorage.setItem('port', port);
+    localStorage.setItem('addr', addr);
+    // 获取显示 IP 和端口的元素
+    let ipPortElement = document.getElementById("ipPort");
 
-// 将 IP 地址和端口号插入到元素中
-ipPortElement.textContent = ip + ":" + port;
+    // 将 IP 地址和端口号插入到元素中
+    ipPortElement.textContent = ip + ":" + port + "  地址：" + addr;
+}
+update_ipport();
 
-
-var connection = new WebSocket('ws://192.168.4.1:81/', ['arduino']);
+var connection = new WebSocket(`ws://${ip}:${port}/`, ['arduino']);
 connection.onopen = function () {
     connection.send('Connect ' + new Date());
 };
@@ -90,7 +98,7 @@ setInterval(function () {
             $wifiIcon.css("color", "#f80505"); //红
             $wifiIcon.removeClass("layui-anim-scalesmall-spring layui-anim-loop");
             // location.reload();
-            connection_flag ? window.location.reload() : $wifiIcon.css("color", "#ffb800"); //黄;
+            connection_flag ? window.location.reload() : $wifiIcon.css("color", "#ffb800"); //黄;//判断为打开自动重连时再刷新重连
             break;
         default:
             $wifiIcon.css("color", "#f80505"); //红
@@ -118,8 +126,13 @@ function sendmsg(send_msg) {
     // 给目标元素追加「往下滑入」的动画
     // setTimeout(function () { $('#send_msg').addClass('layui-anim-fadein'); });
     // $('#send_msg').removeClass('layui-anim-fadein');
-    connection.send(result + " " + send_msg_crc);
-    $("#input_send_count").val(send_count++);
+    try {
+        connection.send(result + " " + send_msg_crc);
+        $("#input_send_count").val(send_count++);
+    } catch (error) {
+        // layer.msg('发送消息时出错了:' + error)
+        console.error('发送消息时出错了:', error);
+    }
 }
 
 
@@ -131,28 +144,28 @@ layui.use(['element', 'layer', 'util'], function () {
         , layer = layui.layer
         , util = layui.util
         , $ = layui.$
-        , dropdown = layui.dropdown;
+    //  , dropdown = layui.dropdown;
 
-    dropdown.render({
-        elem: '.demo-dropdown-base', // 绑定元素选择器，此处指向 class 可同时绑定多个元素
-        data: [{
-            title: '位置环',
-            id: 100,
-            cmd: "01 80 21 00 01"
-        }, {
-            title: '速度环',
-            id: 101,
-            cmd: "01 80 21 00 02"
-        }, {
-            title: '力矩环',
-            id: 102,
-            cmd: "01 80 21 00 03"
-        }],
-        click: function (obj) {
-            this.elem.find('span').text(obj.title);
-            sendWithRetries(obj.cmd);
-        }
-    });
+    // dropdown.render({
+    //     elem: '.demo-dropdown-base', // 绑定元素选择器，此处指向 class 可同时绑定多个元素
+    //     data: [{
+    //         title: '位置环',
+    //         id: 100,
+    //         cmd: "01 80 21 00 01"
+    //     }, {
+    //         title: '速度环',
+    //         id: 101,
+    //         cmd: "01 80 21 00 02"
+    //     }, {
+    //         title: '力矩环',
+    //         id: 102,
+    //         cmd: "01 80 21 00 03"
+    //     }],
+    //     click: function (obj) {
+    //         this.elem.find('span').text(obj.title);
+    //         sendWithRetries(obj.cmd);
+    //     }
+    // });
     //头部事件
     util.event('lay-header-event', {
         //左侧菜单事件
@@ -179,18 +192,45 @@ layui.use(['element', 'layer', 'util'], function () {
 
         },
 
-        menuRight: function () {  // 右侧菜单事件
+
+        menuRight: function () {
+            // 定义 HTML 内容
+            var contentHTML = `
+                <div style="padding: 15px;">
+                    <label for="ip">IP：</label>
+                    <input type="text" id="ip" value="${ip}"><br><br>
+                    <label for="port">端口：</label>
+                    <input type="text" id="port" value="${port}"><br><br>
+                    <label for="addr">地址：</label>
+                    <input type="text" id="addr" value="${addr}"><br><br>
+                    <button id="submitBtn">确定</button>
+                </div>
+            `;
+
+            // 打开右侧菜单
             layer.open({
                 type: 1,
                 title: '基础配置',
-                content: '<div style="padding: 15px;">ip,端口,用户，控制模式</div>',
+                content: contentHTML,
                 area: ['260px', '100%'],
                 offset: 'rt', // 右上角
                 anim: 'slideLeft', // 从右侧抽屉滑出
                 shadeClose: true,
                 scrollbar: false
             });
+
+            // 设置确定按钮点击事件,更新连接
+            $('#submitBtn').click(function () {
+                // 获取输入框的值
+                ip = $('#ip').val();
+                port = $('#port').val();
+                addr = $('#addr').val();
+                // layer.closeAll();
+                update_ipport();//更新基础设置
+                window.location.reload()//刷新生效
+            });
         }
+
     });
 
 });
@@ -318,19 +358,13 @@ IframeOnClick.track(document.getElementById("iFrame"), function () {
 
 $('#stop').click(function () {
     // sendmsg('01 C0 04 55 AA 20 DF');
-    // sendWithRetries('01 C0 04 55 AA 20 DF');
-    read_with_id(11); // 启动发送帧数据的过程
-    // 发送数据并检查回复
-    // sendWithRetries();
-    // read_with_id();
-    // for (var i = 1; i < 31; i++) {
-    //     sendmsg(id.toString(16).padStart(2, '0') + " 00 " + i.toString(16).padStart(2, '0') + " 00 00");
-    // }
-
+    sendWithRetries(parseInt(addr, 10).toString(16).padStart(2, '0') + ' C0 04 55 AA 20 DF');
+    // read_with_id(11); // 启动发送帧数据的过程
     layer.msg('关使能')
 
     // 在父页面中调用子页面函数
     document.getElementById('iFrame').contentWindow.updateValue(182, 88);
+    // document.getElementById('iFrame').contentWindow.disableDevice();//调用子页面的关使能
 
     // 给目标元素追加「往下滑入」的动画
     setTimeout(function () { $('#stop').addClass('layui-anim-scale'); });
@@ -344,6 +378,9 @@ var maxSendAttempts = 10; //最大重发次数
 var currentFrameIndex = 256;
 // 发送数据
 function sendWithRetries(sendData) {
+    // 将地址值转换为两位的十六进制字符串
+    let addrHex = parseInt(addr, 10).toString(16).padStart(2, '0');
+    sendData = addrHex + sendData.substr(2);//将地址替换成设置的地址
     var sendAttempts = 0;
     function attemptToSend() {
         if (sendAttempts < maxSendAttempts) {
@@ -354,6 +391,9 @@ function sendWithRetries(sendData) {
             }, 50); // 等待200毫秒后检查接收数据
         } else {
             console.log("通讯失败");
+            if (connection.readyState != WebSocket.OPEN) {
+                layer.msg("WiFi未连接");
+            }
             $("#can_flag").css("background", "#f80505");
             $("#res_msg").css("color", "#f80505");
         }
