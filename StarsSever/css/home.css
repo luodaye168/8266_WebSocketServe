@@ -6,11 +6,6 @@ body {
 
 }
 
-canvas {
-    /* background: #00BFFF; */
-
-
-}
 
 .board {
     width: 200px;
@@ -51,6 +46,7 @@ canvas {
     height: 60px;
     float: right;
     margin: 5px;
+    color: #fff;
     border-radius: 30px;
     border: 1px solid #fff;
     text-align: center;
@@ -97,7 +93,8 @@ canvas {
 }
 
 #main_dl{
-    background: #fff;
+    /* background: #3d3e4c; */
+    background-color: #3d3e4c;
     width: 80px;
     height: 80px;
     border-radius: 40px;

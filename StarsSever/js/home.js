@@ -1,45 +1,9 @@
-//////////////////////////////////////鼠标键盘修改val////////////////////////
-const valueDisplay = document.getElementById('dlfk');
 
-let dlfk_minval = -150;
-let dlfk_maxval = 150;
-let val = 0;
-let adjusting = false;
-valueDisplay.addEventListener('mouseup', () => {
-    adjusting = true;
-    // valueDisplay.style.backgroundColor = 'lightblue';
-});
-
-window.addEventListener('mousedown', () => {
-    adjusting = false;
-    // valueDisplay.style.backgroundColor = 'skyblue';
-});
-
-// 监听滚轮事件，实时更新仪表盘的值和颜色
-document.body.addEventListener('wheel', (event) => {
-    if (adjusting) {
-        val += event.deltaY > 0 ? -1 : 1;
-        val = val >= dlfk_maxval ? dlfk_maxval : val <= dlfk_minval ? dlfk_minval : val;  //   0 <= val <= 100
-
-        updata_dlfk(val);
-
-    }
-});
-// 监听键盘按键事件
-document.addEventListener('keydown', (event) => {
-    if (adjusting) { // 如果处于调整状态
-        if (event.key === 'ArrowUp') { // 按下了上箭头键
-            val = Math.min(val + 1, dlfk_maxval); // 增加 val 值，但不超过 100
-        } else if (event.key === 'ArrowDown') { // 按下了下箭头键
-            val = Math.max(val - 1, dlfk_minval); // 减少 val 值，但不小于 -100
-        }
-        updata_dlfk(val);
-    }
-});
-//////////////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////各仪表盘更新指针函数//////////////////////////////////////////////
+/***********************************************************************************************************
+*
+*                                               各仪表盘更新指针函数
+*
+***********************************************************************************************************/
 //更新大仪表盘中的电流
 function updata_dlfk(dlfk_val) {
     option.series[0].data[0].name = '电流反馈'
@@ -82,17 +46,21 @@ function updata_main_dl(main_dl_val) {
 }
 
 //更新小仪表盘中的电压
-function update_main_dy(value) {        
+function update_main_dy(value) {
     var spanElement = document.getElementById('span_dy_val');
     if (spanElement) {
         spanElement.textContent = value + 'v';
     }
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-////////////////////////////////////echart//////////////////////////////////////
+/***********************************************************************************************************
+*
+*                                            配置大仪表盘
+*
+***********************************************************************************************************/
 // 创建一个 ECharts 实例
 var chartDom_dlfk = document.getElementById('dlfk'); // 获取图表容器元素
 var Chart_dlfk = echarts.init(chartDom_dlfk); // 初始化 ECharts 实例
@@ -205,9 +173,13 @@ option.series[0].data[0].name = '母线电压'
 option.series[0].min = 0
 option.series[0].max = 1000
 option && Chart_mxdy.setOption(option);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
+/***********************************************************************************************************
+*
+*                                           配置小仪表盘main
+*
+***********************************************************************************************************/
 // 获取 main 图表的 DOM 元素
 var chartDom = document.getElementById('main');
 // 初始化 main 图表
@@ -228,7 +200,7 @@ const gaugeData = [
         detail: {
             // width: 50,
             // height: 14,
-            color: '#2f363c',
+            color: 'auto',
             // backgroundColor: 'inherit',
             // borderRadius: 3,
             valueAnimation: false, // 值变化时显示动画
@@ -239,7 +211,7 @@ const gaugeData = [
         },
         pointer: {
             itemStyle: {
-                color: '#a0a0a0' // 设置指针颜色
+                color: 'auto' // 设置指针颜色
             },
         },
     },
@@ -254,14 +226,14 @@ const gaugeData = [
             // height: 14,
             fontSize: 14,
             fontWeight: 'normal', // 标题字体粗细，可以设置为 'normal', 'bold', 'bolder', 'lighter' 或数字值
-            color: 'red',
+            color: '#fff',
             // backgroundColor: 'inherit',
             // borderRadius: 3,
-            formatter: '{value}', // 数据详情的格式化字符串
+            formatter: '{value} RPM', // 数据详情的格式化字符串
             offsetCenter: ['0%', '65%'], //val偏移x y
         },
         itemStyle: {
-            color: 'red' // 设置指针颜色
+            color: '#fff' // 设置指针颜色
         },
     },
 ];
@@ -296,13 +268,16 @@ main_option = {
             axisLine: {
                 roundCap: true, // 轴线末端使用圆角
                 lineStyle: {
-                    width: 1 // 轴线的宽度
+                    width: 3, // 轴线的宽度
+                    color: [ // 设置不同区域的颜色
+                        [1, '#a0a0a0'] // 100 到 200 的区域颜色为绿色  4040ff 主题颜色
+                    ]
                 }
             },
             axisLabel: {
                 show: true, // 显示刻度标签
                 distance: 5,  // 刻度标签与刻度线的距离
-                color: 'black' // 刻度标签的颜色自动适应
+                color: 'auto' // 刻度标签的颜色自动适应
             },
             data: gaugeData, // 预定义的仪表盘数据
             title: {
@@ -311,10 +286,19 @@ main_option = {
             },
             splitLine: {
                 distance: 0, //分割线与轴线距离
-
+                lineStyle: {
+                    width: 1, // 轴线的宽度
+                    color: [ // 设置不同区域的颜色
+                        [1, '#a0a0a0'] // 100 到 200 的区域颜色为绿色  4040ff 主题颜色
+                    ]
+                }
             },
             axisTick: {
-                distance: 0//刻度线与轴线距离
+                distance: 0,//刻度线与轴线距离
+                lineStyle:
+                {
+                    color: 'auto'
+                }
             },
 
             radius: '95%', // 设置仪表盘半径为整个容器的 75%
@@ -328,36 +312,14 @@ main_option = {
 
 // 使用主图表的配置选项进行初始化
 main_option && mainChart.setOption(main_option);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-// 监听主图表的点击事件
-// mainChart.on('click', function (params) {
-//     if (params.seriesType === 'gauge') { // 确保是仪表盘图表的点击事件
-//         const clickedValue = params.data.value; // 获取点击的数据值
-//         console.log('Clicked value:', clickedValue);
-//     }
-// });
-
-
-// main_option.series[0].detail.color = '#fff';
-// mainChart.setOption(main_option);
-
-// 您还可以使用以下代码来定时刷新仪表盘数据
-// setInterval(function () {
-//     gaugeData[0].value = +(Math.random() * 100).toFixed(2);
-//     gaugeData[1].value = +(Math.random() * 100).toFixed(2);
-//     myChart.setOption({
-//         series: [
-//             {
-//                 data: gaugeData
-//             }
-//         ]
-//     });
-// }, 2000);
-//////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////反馈电流小仪表盘////////////////////////
+/***********************************************************************************************************
+*
+*                                               配置小电流仪表盘
+*
+***********************************************************************************************************/
 var chartDom = document.getElementById('main_dl');
 var Chart_main_dl = echarts.init(chartDom);
 var main_dl_option;
@@ -372,28 +334,34 @@ main_dl_option = {
             type: 'gauge', // 图表类型为仪表盘
             // progress: {
             //     show: true, // 显示进度条
-            //     roundCap: true //圆形边端
+            //     width:3
+            //     // roundCap: true //圆形边端
             // },
             radius: 40,
-            detail: {
-                // valueAnimation: false, // 值变化时显示动画
-                formatter: '{value} A', // 仪表盘详情的显示格式
-                offsetCenter: ['0%', '70%'], //val偏移x y
-                textStyle: {
-                    fontSize: 10, // 标题字体大小
-                    // color: 'red', // 标题字体颜色
-                    fontWeight: 'normal' // 标题字体粗细，可以设置为 'normal', 'bold', 'bolder', 'lighter' 或数字值
-                }
-            },
-            animation: false, //动画
             pointer: { //指针
+                show: false,
                 length: '100%',
                 width: 3,      // 指针宽度
                 itemStyle: {
-                    color: '#FF0000',
+                    color: 'auto',
 
                 }
             },
+            detail: {
+                valueAnimation: false, // 值变化时显示动画
+                formatter: '{value} A', // 仪表盘详情的显示格式
+                offsetCenter: ['0%', '0%'], //val偏移x y
+                fontWeight: 'lighter', // 标题字体粗细，可以设置为 'normal', 'bold', 'bolder', 'lighter' 或数字值
+                color: '#ffffff', // 标题字体颜色
+
+                textStyle: {
+                    fontSize: 15, // 标题字体大小
+                    // color: '#fff', // 标题字体颜色
+                    // fontWeight: 'normal' // 标题字体粗细，可以设置为 'normal', 'bold', 'bolder', 'lighter' 或数字值
+                }
+            },
+            animation: false, //动画
+
             // anchor: {//轴心
             //     show: true,
             //     showAbove: true,
@@ -406,19 +374,19 @@ main_dl_option = {
                 show: false, // 显示刻度标签
                 distance: 5, // 刻度标签与刻度线的距离
                 // fontSize: 10, // 刻度标签字体大小
-                color: 'black', // 刻度标签的颜色自动适应
+                color: 'auto', // 刻度标签的颜色自动适应
 
             },
             axisLine: {
                 lineStyle: {
-                    width: 2, // 设置轴线的宽度
-                    // color: [ // 设置不同区域的颜色
-                    //     // [0, '#0080C0'], // -100 到 0 的区域颜色为红色
-                    //     [0.25, '#0080C0'], // -100 到 0 的区域颜色为红色
-                    //     [0.5, '#8080FF'], // 0 到 100 的区域颜色为蓝绿色
-                    //     [0.75, '#FF80C0'], // 0 到 100 的区域颜色为蓝绿色
-                    //     [1, '#FF0000'] // 100 到 200 的区域颜色为绿色
-                    // ]
+                    width: 3, // 设置轴线的宽度
+                    color: [ // 设置不同区域的颜色
+                        [1, '#fff'], // -100 到 0 的区域颜色为红色
+                        // [0.25, '#0080C0'], // -100 到 0 的区域颜色为红色
+                        // [0.5, '#8080FF'], // 0 到 100 的区域颜色为蓝绿色
+                        // [0.75, '#FF80C0'], // 0 到 100 的区域颜色为蓝绿色
+                        // [1, '#FF0000'] // 100 到 200 的区域颜色为绿色
+                    ]
                 },
                 roundCap: false
             },
@@ -432,10 +400,14 @@ main_dl_option = {
             axisTick: {
                 distance: 0,
                 length: 4, // 刻度线长度为 8 像素
+                lineStyle:
+                {
+                    color: 'auto'
+                }
             },
             data: [
                 {
-                    value: 0, // 初始值
+                    value: -100, // 初始值
                     title: {
                         show: true,
                         offsetCenter: [0, '-50%'], // 标题的位置偏移
@@ -452,18 +424,21 @@ main_dl_option = {
 
 main_dl_option && Chart_main_dl.setOption(main_dl_option);
 
-//////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function updateValue() { } //参数配置页面的函数，不定义不行
 
 
-
-///////////////////////////////////////////////////滑动条////////////////////////////
+/***********************************************************************************************************
+*
+*                                               滑动条
+*
+***********************************************************************************************************/
 layui.use(['slider', 'jquery'], function () {
     var slider = layui.slider;
     var $ = layui.jquery;
 
-    var currentValue = 0; // 当前滑块的值
+    var huakuai_value = 0; // 当前滑块的值
     var startValue = 0; // 触摸开始时的滑块值
 
     var inst = slider.render({
@@ -474,9 +449,8 @@ layui.use(['slider', 'jquery'], function () {
         input: true,
         value: 0, // 初始值
         change: function (value) {
-            currentValue = value;
+            huakuai_value = value;
             updata_main_set_zs(value * 30);
-
         },
         // done: function(value){  //拖拽结束时触发
         //     console.log(value) // 滑块当前值
@@ -491,20 +465,28 @@ layui.use(['slider', 'jquery'], function () {
     $('.min-label').on('dblclick', function () {
         inst.setValue(-100);
     });
-    $('.layui-slider-wrap').on('dblclick', function () {
+    $('#main').on('dblclick', function () {
         inst.setValue(0);
     });
 
+
+
+
+    //触摸修改val----------------------------------
     var isTouching = false; // 是否正在触摸
     var startX = 0; // 触摸开始时的X坐标
 
-    $('#ID-slider-demo-maxmin').on('touchstart', function (e) {
+    const huakuai_dom = $('.layui-slider-wrap');
+
+    huakuai_dom.on('touchstart', function (e) {
+        e.stopPropagation() //停止冒泡
+        e.preventDefault(); // 阻止默认的点击跳转行为
         isTouching = true;
         startX = e.touches[0].clientX;
-        startValue = currentValue; // 记录触摸开始时的滑块值
+        startValue = huakuai_value; // 记录触摸开始时的滑块值
     });
 
-    $('#ID-slider-demo-maxmin').on('touchmove', function (e) {
+    huakuai_dom.on('touchmove', function (e) {
         if (isTouching) {
             var moveX = e.touches[0].clientX - startX;
             // 根据触摸开始时的滑块值来计算新的滑块值
@@ -513,14 +495,70 @@ layui.use(['slider', 'jquery'], function () {
         }
     });
 
-    $('#ID-slider-demo-maxmin').on('touchend', function () {
+    huakuai_dom.on('touchend', function () {
         isTouching = false;
     });
+
+
+
+    //鼠标键盘修改val-------------------------------------
+    let main_set_zs_minval = -100;
+    let main_set_zs_maxval = 100;
+    let adjusting = false;
+    let allowScroll = true; // 标志是否允许滚动
+    const main_dom = document.getElementsByClassName('layui-slider-wrap')[0];
+    main_dom.addEventListener('mouseup', () => {
+        gaugeData[0].pointer.itemStyle.color = '#4040ff';
+        mainChart.setOption(main_option);
+        adjusting = true;
+        allowScroll = false; // 在调整状态下禁止滚动
+    });
+
+    window.addEventListener('mousedown', () => {
+        gaugeData[0].pointer.itemStyle.color = 'auto';
+        mainChart.setOption(main_option);
+        adjusting = false;
+        allowScroll = true; // 在非调整状态下允许滚动
+    });
+
+    // 监听滚轮事件，实时更新仪表盘的值和颜色
+    document.body.addEventListener('wheel', (event) => {
+        event.stopPropagation()
+        if (!allowScroll) {
+            event.preventDefault(); // 阻止默认的滚动行为
+        }
+        if (adjusting) {
+            huakuai_value += event.deltaY > 0 ? -1 : 1;
+            huakuai_value = huakuai_value >= main_set_zs_maxval ? main_set_zs_maxval : huakuai_value <= main_set_zs_minval ? main_set_zs_minval : huakuai_value;  //   0 <= huakuai_value <= 100
+            updata_main_set_zs(huakuai_value);
+            inst.setValue(huakuai_value);
+        }
+    }, { passive: false });
+    // 监听键盘按键事件
+    document.addEventListener('keydown', (event) => {
+        event.stopPropagation()
+        if (!allowScroll) {
+            event.preventDefault(); // 阻止默认的滚动行为
+        }
+        if (adjusting) { // 如果处于调整状态
+            if (event.key === 'ArrowUp') { // 按下了上箭头键
+                huakuai_value = Math.min(huakuai_value + 1, main_set_zs_maxval); // 增加 huakuai_value 值，但不超过 100
+            } else if (event.key === 'ArrowDown') { // 按下了下箭头键
+                huakuai_value = Math.max(huakuai_value - 1, main_set_zs_minval); // 减少 huakuai_value 值，但不小于 -100
+            }
+            updata_main_set_zs(huakuai_value);
+            inst.setValue(huakuai_value);
+        }
+    });
 });
-//////////////////////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////// 函数防抖实现///////////////////////////////
+/***********************************************************************************************************
+*
+*                                               函数防抖实现
+*
+***********************************************************************************************************/
 function debounce(func, delay) {
     let timer;
     return function () {
@@ -536,13 +574,15 @@ const reloadPage = debounce(function () {
 
 // 监听窗口大小变化事件，并在防抖函数中重新加载页面
 window.addEventListener('resize', reloadPage);
-////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-////////////////////////////////////////控制模式按钮////////////////////
+/***********************************************************************************************************
+*
+*                                               控制模式按钮
+*
+***********************************************************************************************************/
 layui.use(function () {
     var dropdown = layui.dropdown;
-
     dropdown.render({
         elem: '.demo-dropdown-base', // 绑定元素选择器，此处指向 class 可同时绑定多个元素
         data: [{
@@ -565,31 +605,81 @@ layui.use(function () {
     });
 
 });
-/////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////开关使能按钮//////////////////
-
+/***********************************************************************************************************
+*
+*                                               开关使能处理
+*
+***********************************************************************************************************/
+//开使能函数
 function enableDevice() {
+    // 下发开使能
+    parent.sendWithRetries('01 C0 03 AA 55 B8 40');
+
+    //获取dom
     var icon = $('#main_start').find('i');
     var buttonText = $('#main_start').find('span');
-    $("#main_start").css("background", "#00FF00");
-    console.log("开使能");
-    parent.sendWithRetries('01 C0 03 AA 55 B8 40'); // 开
+
+    //修改使能按钮的颜色和文字
+    $("#main_start").css("background", "#00d800");
     buttonText.text("关使能");
+
+    //修改电压图标颜色
     icon.css('color', '#fff');
+    $("#div_dy").css("color", "#4040ff");
+    $("#span_dy_val").css("color", "#fff");
+    $("#div_dy").css("border", "1px solid #4040ff");
+
+    //修改mainChart颜色
+    main_option.series[0].axisLine.lineStyle.color = [
+        [0.25, '#0080C0'],
+        [0.5, '#8080FF'],
+        [0.75, '#FF80C0'],
+        [1, '#FF0000']
+    ];
+    mainChart.setOption(main_option);
+
+    //修改小电流仪表盘颜色
+    main_dl_option.series[0].axisLine.lineStyle.color = [ // 设置不同区域的颜色
+        [0.75, '#4040ff'],
+        [1, '#FF0000']
+    ]
+    Chart_main_dl.setOption(main_dl_option);
 }
 
+//关使能函数
 function disableDevice() {
+    // 下发关使能
+    parent.sendWithRetries('01 C0 04 55 AA 20 DF');
+
+    //获取dom
     var icon = $('#main_start').find('i');
     var buttonText = $('#main_start').find('span');
-    $("#main_start").css("background", "#fff");
 
-    console.log("关使能");
-    parent.sendWithRetries('01 C0 04 55 AA 20 DF'); // 关
+    //修改使能按钮的颜色和文字
+    $("#main_start").css("background", "#fff");
     buttonText.text("开使能");
+
+    //修改电压图标颜色
     icon.css('color', '#2f363c');
+    $("#div_dy").css("color", "#fff");
+    $("#div_dy").css("border", "1px solid #fff");
+
+    //修改mainChart颜色
+    main_option.series[0].axisLine.lineStyle.color = [
+        [1, '#a0a0a0']
+    ];
+    mainChart.setOption(main_option);
+
+    //修改小电流仪表盘颜色
+    main_dl_option.series[0].axisLine.lineStyle.color = [
+        [1, '#fff']
+    ];
+    Chart_main_dl.setOption(main_dl_option);
 }
 
+//开关使能按钮点击事件处理函数
 $('#main_start').click(function () {
     if ($(this).find('span').text() === "开使能") {
         enableDevice();
@@ -598,7 +688,7 @@ $('#main_start').click(function () {
     }
 });
 
-/////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 

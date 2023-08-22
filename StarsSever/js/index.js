@@ -24,6 +24,7 @@ function update_ipport() {
 update_ipport();
 
 var connection = new WebSocket(`ws://${ip}:${port}/`, ['arduino']);
+// var connection 
 connection.onopen = function () {
     connection.send('Connect ' + new Date());
 };
@@ -358,13 +359,13 @@ IframeOnClick.track(document.getElementById("iFrame"), function () {
 
 $('#stop').click(function () {
     // sendmsg('01 C0 04 55 AA 20 DF');
-    sendWithRetries(parseInt(addr, 10).toString(16).padStart(2, '0') + ' C0 04 55 AA 20 DF');
+    sendWithRetries('01 C0 04 55 AA 20 DF');
     // read_with_id(11); // 启动发送帧数据的过程
     layer.msg('关使能')
 
     // 在父页面中调用子页面函数
     document.getElementById('iFrame').contentWindow.updateValue(182, 88);
-    // document.getElementById('iFrame').contentWindow.disableDevice();//调用子页面的关使能
+    document.getElementById('iFrame').contentWindow.disableDevice();//调用子页面的关使能
 
     // 给目标元素追加「往下滑入」的动画
     setTimeout(function () { $('#stop').addClass('layui-anim-scale'); });
