@@ -13,21 +13,26 @@
 
 
 
-    <div class="layui-card layui-hide-xs" style="margin: 10px;">
-        <div class="layui-card-header">仪表盘</i></div>
-        <div class="layui-card-body">
-            <div class="layui-row layui-col-space1">
-                <div id="dlfk" class="board layui-col-lg2 layui-col-md2 layui-col-sm3 layui-col-xs6"></div>
+    <!-- <div class="layui-card layui-hide-xs" style="margin: 10px;"> -->
+    <div class="layui-card " style="margin: 3px;">
+        <!-- <div class="layui-card-header">仪表盘</div>
+        <div class="layui-card-body"> -->
+        <div class="layui-row layui-col-space1">
+            <!-- <div id="dlfk" class="board layui-col-lg2 layui-col-md2 layui-col-sm3 layui-col-xs6"></div>
                 <div id="njsd" class="board layui-col-lg2 layui-col-md2 layui-col-sm3 layui-col-xs6"></div>
                 <div id="zs" class="board layui-col-lg2 layui-col-md2 layui-col-sm3 layui-col-xs6"></div>
-                <div id="mxdy" class="board layui-col-lg2 layui-col-md2 layui-col-sm3 layui-col-xs6"></div>
-            </div>
+                <div id="mxdy" class="board layui-col-lg2 layui-col-md2 layui-col-sm3 layui-col-xs6"></div> -->
+            <div id="zxt_zs" class=" layui-col-lg4 layui-col-md6 layui-col-sm6 layui-col-xs6"
+                style="height: 110px;width: 50%;"></div>
+            <div id="zxt_dl" class=" layui-col-lg4 layui-col-md6 layui-col-sm6 layui-col-xs6"
+                style="height: 110px;width: 50%;"></div>
         </div>
+        <!-- </div> -->
     </div>
 
-    <div class="layui-card layui-col-lg4 layui-col-md5 layui-col-sm6 " style="margin: 10px;">
+    <div class="layui-card layui-col-lg4 layui-col-md6 layui-col-sm6 ">
         <!-- <div class="layui-card layui-col-lg4 layui-col-md5 layui-col-sm6 " style="margin: 10px;"> -->
-        <div class="layui-card-header" >
+        <div class="layui-card-header">
             <button class="layui-btn demo-dropdown-base " lay-header-event="ctrl_mode">
                 <span style="color: #e6ecf1;">控制模式</span>
             </button>
@@ -37,12 +42,12 @@
 
                 <div id="div_dy">
                     <i class="layui-icon layui-icon-chart" style="font-size: 25px;"></i>
-                    <span id="span_dy_val">750.0v</span>
+                    <span id="span_dy_val">0.0v</span>
                 </div>
 
                 <div id="main_start" class="zoomable">
                     <i class="layui-icon layui-icon-logout layui-anim" style="font-size: 25px; color: #a0a0a0;"></i>
-                    <span >开使能</span>
+                    <span style="color: #a0a0a0;">开使能</span>
                 </div>
 
                 <div id="main_dl"></div>
@@ -56,20 +61,27 @@
                     <div id="ID-slider-demo-maxmin"></div>
                     <div class="max-label">100</div>
                 </div>
-
-                
-                <!-- <div id="dlfk" class="board layui-col-lg2 layui-col-md2 layui-col-sm3 layui-col-xs6"></div> -->
             </div>
         </div>
     </div>
 
-    <div class="layui-panel  layui-col-lg4 layui-col-md5 layui-col-sm6 layui-col-xs12">
-        <div style="padding: 32px;">面板任意内容</div>
+    <div class="layui-card  layui-col-lg4 layui-col-md6 layui-col-sm6 layui-col-xs12" style="height: 404px;">
+        <div class="layui-card-header">
+            <span>系统状态</span> 0x0003
+            <span style="float: right;">系统告警 0x6001</span>
+        </div>
+        <div class="layui-card-body">
+            <!-- <div id="zxt_zs" class="board layui-col-lg12 layui-col-xs12" ></div> -->
+            <div class="layui-row">
+                <div class="layui-col-xs6">
+                    <div class="grid-demo grid-demo-bg1" style="height: 335px;background-color: #959191;">6/12</div>
+                </div>
+                <div class="layui-col-xs6">
+                    <div class="grid-demo">6/12</div>
+                </div>
+            </div>
+        </div>
     </div>
-    <!-- <div id="dlfk" class="board layui-col-lg2 layui-col-md3 layui-col-sm4 layui-col-xs6"></div>
-    <div id="njsd" class="board layui-col-lg2 layui-col-md3 layui-col-sm4 layui-col-xs6"></div>
-    <div id="zs" class="board layui-col-lg2 layui-col-md3 layui-col-sm4 layui-col-xs6"></div>
-    <div id="mxdy" class="board layui-col-lg2 layui-col-md3 layui-col-sm4 layui-col-xs6"></div> -->
 
     <script src="./js/jquery-3.6.0.min.js"></script>
     <script src="./layui/layui.js"></script>

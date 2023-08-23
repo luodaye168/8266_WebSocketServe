@@ -4,6 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes"> <!-- 启用 standalone 模式 -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- 设置状态栏样式 -->
     <title>星辰上位机</title>
     <link rel="stylesheet" href="./layui/css/layui.css">
     <link rel="stylesheet" href="./css/index.css">
@@ -13,7 +15,7 @@
     <div class="layui-layout layui-layout-admin">
         <!-- 头部 -->
         <div class="layui-header">
-            <div class="layui-logo ">stars</div>
+            <div class="layui-logo " id="logo"></div>
             <!-- 头部区域（可配合layui 已有的水平导航） -->
             <ul class="layui-nav layui-layout-left ">
                 <!-- 移动端显示 -->
@@ -87,7 +89,7 @@
         </div>
 
         <!-- 底部固定区域 -->
-        <div class="layui-footer " style="left: 0; ">
+        <div class="layui-footer " style="left: 0; padding: 0;">
             <!-- <span class="layui-hide-xs">ip:port </span>  -->
             <span class="layui-hide-xs" id="ipPort"></span>&nbsp;&nbsp;&nbsp; <!-- 这里将会显示 IP 地址和端口号 -->
             <input id="can_flag" type="text" value=" " readonly="readonly" style="width: 18px; background: #c2c2c2;">
@@ -103,6 +105,7 @@
         </div>
     </div>
 
+    <script src="./js/echarts.js"></script>
     <script src="./layui/layui.js"></script>
     <script src="./js/jquery-3.6.0.min.js"></script>
     <!-- <script src="./js/baseAPI.js"></script> -->

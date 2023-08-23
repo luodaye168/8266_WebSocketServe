@@ -6,6 +6,11 @@ body {
 
 }
 
+.layui-card {
+    border: 1px solid #d0d0d0;
+    /* background-color: rgb(216, 228, 248) !important; */
+    margin-bottom: 5px !important;
+}
 
 .board {
     width: 200px;
@@ -61,7 +66,8 @@ body {
 }
 
 .zoomable {
-    transition: transform 0.3s ease; /* 添加平滑的过渡效果 */
+    transition: transform 0.3s ease;
+    /* 添加平滑的过渡效果 */
 }
 
 
@@ -92,7 +98,7 @@ body {
     /* 文本水平居中 */
 }
 
-#main_dl{
+#main_dl {
     /* background: #3d3e4c; */
     background-color: #3d3e4c;
     width: 80px;

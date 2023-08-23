@@ -1,29 +1,56 @@
+/***********************************************************************************************************
+*
+*                          从localStorage读取变量并还原滑块和设定转速的值
+*
+***********************************************************************************************************/
+document.addEventListener("DOMContentLoaded", () => {
+    // 从localStorage中读取enableDevice变量
+    var enableDevice = localStorage.getItem("enableDevice");
+    if (enableDevice === null) {
+        localStorage.setItem('enableDevice', false);
+    }
+    if (enableDevice === "true") {
+        enableDevice_style();
+    } else {
+        disableDevice_style();
+    }
+
+    // 从localStorage中读取huakuai_value变量
+    var huakuai_value = localStorage.getItem("huakuai_value");
+    if (huakuai_value === null) {
+        localStorage.setItem('huakuai_value', 0);
+    }
+    else {
+        updata_main_set_zs(parseInt(huakuai_value) * 30);
+    }
+});
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /***********************************************************************************************************
 *
 *                                               各仪表盘更新指针函数
 *
 ***********************************************************************************************************/
-//更新大仪表盘中的电流
-function updata_dlfk(dlfk_val) {
-    option.series[0].data[0].name = '电流反馈'
-    option.series[0].min = -150
-    option.series[0].max = 150
-    // 更新图表的配置并实时更新仪表盘的值
-    option.series[0].data[0].value = dlfk_val;
-    Chart_dlfk.setOption(option);
-    updata_main_dl(dlfk_val);
-}
+// //更新大仪表盘中的电流
+// function updata_dlfk(dlfk_val) {
+//     option.series[0].data[0].name = '电流反馈'
+//     option.series[0].min = -150
+//     option.series[0].max = 150
+//     // 更新图表的配置并实时更新仪表盘的值
+//     option.series[0].data[0].value = dlfk_val;
+//     Chart_dlfk.setOption(option);
+//     updata_main_dl(dlfk_val);
+// }
 
-//更新大仪表盘中的转速
-function updata_zs(zs_val) {
-    option.series[0].data[0].name = '转速'
-    option.series[0].min = -3000
-    option.series[0].max = 3000
-    // 更新图表的配置并实时更新仪表盘的值
-    option.series[0].data[0].value = zs_val * 30;
-    Chart_zs.setOption(option);
-}
+// //更新大仪表盘中的转速
+// function updata_zs(zs_val) {
+//     option.series[0].data[0].name = '转速'
+//     option.series[0].min = -3000
+//     option.series[0].max = 3000
+//     // 更新图表的配置并实时更新仪表盘的值
+//     option.series[0].data[0].value = zs_val * 30;
+//     Chart_zs.setOption(option);
+// }
 
 //更新小仪表盘中的设定转速
 function updata_main_set_zs(main_set_zs_val) {
@@ -61,7 +88,7 @@ function update_main_dy(value) {
 *                                            配置大仪表盘
 *
 ***********************************************************************************************************/
-// 创建一个 ECharts 实例
+/*// 创建一个 ECharts 实例
 var chartDom_dlfk = document.getElementById('dlfk'); // 获取图表容器元素
 var Chart_dlfk = echarts.init(chartDom_dlfk); // 初始化 ECharts 实例
 var chartDom_njsd = document.getElementById('njsd'); // 获取图表容器元素
@@ -173,7 +200,7 @@ option.series[0].data[0].name = '母线电压'
 option.series[0].min = 0
 option.series[0].max = 1000
 option && Chart_mxdy.setOption(option);
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 
 /***********************************************************************************************************
 *
@@ -216,7 +243,7 @@ const gaugeData = [
         },
     },
     {
-        value: 40,
+        value: 0,
         name: '转速',
         title: {
             offsetCenter: ['0%', '60%'] //name偏移 x y
@@ -407,7 +434,7 @@ main_dl_option = {
             },
             data: [
                 {
-                    value: -100, // 初始值
+                    value: 0, // 初始值
                     title: {
                         show: true,
                         offsetCenter: [0, '-50%'], // 标题的位置偏移
@@ -434,6 +461,7 @@ function updateValue() { } //参数配置页面的函数，不定义不行
 *                                               滑动条
 *
 ***********************************************************************************************************/
+var ui_huakuai;
 layui.use(['slider', 'jquery'], function () {
     var slider = layui.slider;
     var $ = layui.jquery;
@@ -441,15 +469,16 @@ layui.use(['slider', 'jquery'], function () {
     var huakuai_value = 0; // 当前滑块的值
     var startValue = 0; // 触摸开始时的滑块值
 
-    var inst = slider.render({
+    ui_huakuai = slider.render({
         elem: '#ID-slider-demo-maxmin',
         min: -100, // 最小值
         max: 100, // 最大值
         tips: false, // 关闭默认提示层
         input: true,
-        value: 0, // 初始值
+        value: localStorage.getItem("huakuai_value") || 0, // 初始值
         change: function (value) {
             huakuai_value = value;
+            localStorage.setItem('huakuai_value', value);
             updata_main_set_zs(value * 30);
         },
         // done: function(value){  //拖拽结束时触发
@@ -460,13 +489,13 @@ layui.use(['slider', 'jquery'], function () {
 
     // 绑定点击事件
     $('.max-label').on('dblclick', function () {
-        inst.setValue(100);
+        ui_huakuai.setValue(100);
     });
     $('.min-label').on('dblclick', function () {
-        inst.setValue(-100);
+        ui_huakuai.setValue(-100);
     });
     $('#main').on('dblclick', function () {
-        inst.setValue(0);
+        ui_huakuai.setValue(0);
     });
 
 
@@ -491,7 +520,7 @@ layui.use(['slider', 'jquery'], function () {
             var moveX = e.touches[0].clientX - startX;
             // 根据触摸开始时的滑块值来计算新的滑块值
             var newValue = Math.min(Math.max(startValue + moveX, -100), 100);
-            inst.setValue(newValue);
+            ui_huakuai.setValue(newValue);
         }
     });
 
@@ -508,7 +537,7 @@ layui.use(['slider', 'jquery'], function () {
     let allowScroll = true; // 标志是否允许滚动
     const main_dom = document.getElementsByClassName('layui-slider-wrap')[0];
     main_dom.addEventListener('mouseup', () => {
-        gaugeData[0].pointer.itemStyle.color = '#4040ff';
+        gaugeData[0].pointer.itemStyle.color = '#ffb800';
         mainChart.setOption(main_option);
         adjusting = true;
         allowScroll = false; // 在调整状态下禁止滚动
@@ -531,7 +560,7 @@ layui.use(['slider', 'jquery'], function () {
             huakuai_value += event.deltaY > 0 ? -1 : 1;
             huakuai_value = huakuai_value >= main_set_zs_maxval ? main_set_zs_maxval : huakuai_value <= main_set_zs_minval ? main_set_zs_minval : huakuai_value;  //   0 <= huakuai_value <= 100
             updata_main_set_zs(huakuai_value);
-            inst.setValue(huakuai_value);
+            ui_huakuai.setValue(huakuai_value);
         }
     }, { passive: false });
     // 监听键盘按键事件
@@ -547,7 +576,7 @@ layui.use(['slider', 'jquery'], function () {
                 huakuai_value = Math.max(huakuai_value - 1, main_set_zs_minval); // 减少 huakuai_value 值，但不小于 -100
             }
             updata_main_set_zs(huakuai_value);
-            inst.setValue(huakuai_value);
+            ui_huakuai.setValue(huakuai_value);
         }
     });
 });
@@ -612,18 +641,16 @@ layui.use(function () {
 *                                               开关使能处理
 *
 ***********************************************************************************************************/
-//开使能函数
-function enableDevice() {
-    // 下发开使能
-    parent.sendWithRetries('01 C0 03 AA 55 B8 40');
 
+function enableDevice_style() {
     //获取dom
     var icon = $('#main_start').find('i');
     var buttonText = $('#main_start').find('span');
 
     //修改使能按钮的颜色和文字
-    $("#main_start").css("background", "#00d800");
+    $("#main_start").css("background", "#16b777");
     buttonText.text("关使能");
+    buttonText.css("color", "#fff");
 
     //修改电压图标颜色
     icon.css('color', '#fff');
@@ -648,11 +675,7 @@ function enableDevice() {
     Chart_main_dl.setOption(main_dl_option);
 }
 
-//关使能函数
-function disableDevice() {
-    // 下发关使能
-    parent.sendWithRetries('01 C0 04 55 AA 20 DF');
-
+function disableDevice_style() {
     //获取dom
     var icon = $('#main_start').find('i');
     var buttonText = $('#main_start').find('span');
@@ -660,6 +683,7 @@ function disableDevice() {
     //修改使能按钮的颜色和文字
     $("#main_start").css("background", "#fff");
     buttonText.text("开使能");
+    buttonText.css("color", "#a0a0a0");
 
     //修改电压图标颜色
     icon.css('color', '#2f363c');
@@ -678,6 +702,23 @@ function disableDevice() {
     ];
     Chart_main_dl.setOption(main_dl_option);
 }
+//开使能函数
+function enableDevice() {
+    // 下发开使能
+    parent.sendWithRetries('01 C0 03 AA 55 B8 40');
+
+    localStorage.setItem('enableDevice', true);
+    enableDevice_style()
+}
+
+//关使能函数
+function disableDevice() {
+    // 下发关使能
+    parent.sendWithRetries('01 C0 04 55 AA 20 DF');
+    localStorage.setItem('enableDevice', false);
+    disableDevice_style();
+
+}
 
 //开关使能按钮点击事件处理函数
 $('#main_start').click(function () {
@@ -691,4 +732,168 @@ $('#main_start').click(function () {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+/***********************************************************************************************************
+*
+*                                               折线图
+*
+***********************************************************************************************************/
+var chartDom = document.getElementById('zxt_zs');
+var Chart_zxt_zs = echarts.init(chartDom);
+var option_zxt_zs;
+option_zxt_zs = {
+    // 标题配置
+    title: {
+        text: '速度环', // 标题内容
+        show: false,
+        // textStyle: {
+        //     fontSize: 16, // 标题字体大小
+        //     fontWeight: 'normal' // 标题字体粗细
+        //     // 还可以设置其他样式，比如颜色等
+        // }
+    },
+    // 工具提示配置
+    tooltip: {
+        trigger: 'axis', // 提示类型为坐标轴触发
+        // position: 'bottom' // 将提示框放置在下方
+        position: [0,100] // 尝试其他位置，如 'top', 'right', 'left'
+    },
+    // 图例配置
+    legend: {
+        data: ['设定转速', '实际转速'], // 图例的数据项
+        bottom: 0, // 将图例显示在底部
+        textStyle: {
+            fontSize: 10 // 设置图例字体大小
+        }
+    },
+    // 网格配置
+    grid: {
+        left: '5%', // 网格左边距
+        right: '5%', // 网格右边距
+        bottom: '20%', // 网格底边距
+        containLabel: false, // 网格是否包含轴标签
+        height: '70%' // 设置高度，可以使用百分比或像素值
 
+    },
+    // 工具箱配置
+    toolbox: {
+        feature: {
+            saveAsImage: {} // 工具箱功能，保存为图片
+        },
+        // bottom: "15%", // 将图例显示在底部
+        right: '5%',
+
+    },
+    // 数据区域缩放配置
+    dataZoom: [
+        {
+            type: 'inside', // 内置的数据区域缩放组件
+            start: 0, // 默认缩放起始位置为 0（代表 0%）
+            end: 80 // 默认缩放结束位置为 100（代表 100%）
+        }
+    ],
+    // x 轴配置
+    xAxis: {
+        type: 'category',
+        show: true, // 显示 x 轴
+        axisLabel: {
+            show: false
+        },
+        axisTick: {
+            show: false // x 轴的刻度线
+        },
+        axisLine: {
+            show: true // x 轴的轴线
+        }
+    },
+
+    // y 轴配置
+    yAxis: {
+        type: 'value',
+        show: true, // 显示 y 轴
+        axisLabel: {
+            show: false // y 轴的数字标签
+        },
+        axisLine: {
+            show: true //  y 轴的轴线
+        },
+        splitLine: {
+            show: false //  y 轴的网格线
+        }
+    },
+    // 数据系列配置
+    series: [
+        {
+            name: '设定转速', // 数据系列的名称
+            type: 'line', // 数据系列的类型为折线图
+            // stack: 'Total', // 数据系列的堆叠方式
+            symbol: 'none', // 设置折点圆点为 "none"，即不显示
+            data: [], // 数据项
+        },
+        {
+            name: '实际转速', // 数据系列的名称
+            type: 'line', // 数据系列的类型为折线图
+            // stack: 'Total', // 数据系列的堆叠方式
+            symbol: 'none', // 设置折点圆点为 "none"，即不显示
+            data: [] // 数据项
+        }
+    ]
+};
+
+option_zxt_zs && Chart_zxt_zs.setOption(option_zxt_zs);
+
+
+var chartDom = document.getElementById('zxt_dl');
+var Chart_zxt_dl = echarts.init(chartDom);
+console.log(option_zxt_zs.series[0].name)
+option_zxt_zs.series[0].name = "设定电流"
+option_zxt_zs.series[1].name = "实际电流"
+// 修改图例的数据项为 "设定电流"
+option_zxt_zs.legend.data = ['设定电流', '实际电流'];
+option_zxt_zs && Chart_zxt_dl.setOption(option_zxt_zs);
+
+/////////////////////data塞数据/////////////////////////
+function addData(chart, num1, num2) {
+    if (chart && chart.setOption && Array.isArray(chart.getOption().series)) {
+        const option = chart.getOption();
+        const series1Data = option.series[0].data;
+        const series2Data = option.series[1].data;
+
+        // 添加新数据到各个数据数组
+        series1Data.push(num1);
+        series2Data.push(num2);
+
+        // 如果数据长度超过 100，删除旧的数据项
+        if (series1Data.length > 100) {
+            series1Data.splice(0, series1Data.length - 100);
+        }
+        if (series2Data.length > 100) {
+            series2Data.splice(0, series2Data.length - 100);
+        }
+
+        // 更新图表配置
+        chart.setOption(option);
+    }
+}
+
+
+
+const mainChart1 = echarts.init(document.getElementById('zxt_zs'));
+const mainChart2 = echarts.init(document.getElementById('zxt_dl'));
+// 定义定时器间隔（毫秒）
+const interval = 50; // 每隔 1 秒执行一次
+
+// 启动定时器
+const timer = setInterval(() => {
+    if (localStorage.getItem('enableDevice') === "true") {
+        addData(mainChart1, (localStorage.getItem('huakuai_value') || 0) * 30, (Math.random() * (3000 - -3000) + -3000).toFixed(1));
+        addData(mainChart2, 1000, Math.floor(Math.random() * (30000 - 0 + 1)) / 10 + 0);
+    }
+
+}, interval);
+
+// 停止定时器（例如在不需要定时执行时）
+// setTimeout(function(){
+//     clearInterval(timer);
+// },10000)
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
