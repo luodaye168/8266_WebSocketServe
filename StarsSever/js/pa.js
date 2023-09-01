@@ -16,27 +16,37 @@ function Parameter(xu_hao, id, can_shu_hao, parameter_name, value, unit, editabl
 }
 
 var data1 = [
-    new Parameter(1, 1, "CA-1", "角度设定", "0", " ", false, 0, 72648, "角度设定角度设定角度设定角度设定"),
-    new Parameter(2, 2, "CA-5", "电池电压", "0", "V", false),
-    new Parameter(3, 3, "CA-2", "角度反馈", "0", " ", false),
-    new Parameter(4, 4, "CA-3", "按键键码", "0", " ", false),
-    new Parameter(5, 5, "CA-9", "误差", "0", " ", false),
-    new Parameter(6, 6, "CA-4", "当前模式", "0", " ", false),
-    new Parameter(7, 7, "CA-10", "输出开度", "0", " ", false),
-    new Parameter(11, 11, "CA-12", "角度环比例系数", "0", " ", true),
-    new Parameter(13, 13, "CA-13", "角度环积分常数", "0", " ", true),
-    new Parameter(15, 15, "CA-18", "角度环微分常数", "0", " ", true),
-    new Parameter(17, 17, "CA-19", "最大开度限制", "0", " ", true),
-    new Parameter(19, 19, "CA-20", "最大速度限制", "0", " ", true),
-    new Parameter(21, 21, "CA-21", "最低速度限制", "0", " ", true),
-    new Parameter(23, 23, "CA-22", "独立转向速度", "0", " ", true),
-    new Parameter(25, 25, "PB-02", "扫线反转速度", "0", " ", true),
-    new Parameter(27, 27, "PB-03", "减速梯度", "0", "ms", true),
-    new Parameter(29, 29, "PB-04", "加速时间", "0", "ms", true),
-    new Parameter(24, 24, "ADJ-55", "AI1零偏", "0", " ", true),
-    new Parameter(26, 26, "ADJ-56", "AI1增益", "0", " ", true),
-    new Parameter(28, 28, "ADJ-57", "AI2零偏", "0", " ", true),
-    new Parameter(30, 30, "ADJ-58", "AI2增益", "0", " ", true),
+    //序号 id 参数号 参数名称
+    new Parameter(1, 3, "CA-1", "告警代码", "0", " ", false),
+    new Parameter(2, 7, "CA-5", "速度设定", "0", "RPM", false),
+    new Parameter(3, 4, "CA-2", "系统状态", "0", " ", false),
+    new Parameter(4, 5, "CA-3", "速度反馈", "0", "RPM", false),
+    new Parameter(8, 8, "CA-6", "电流反馈", "0", "A", false),
+    new Parameter(9, 14, "CA-11", "母线电压", "0", "V", false),
+
+
+
+    // new Parameter(1, 1, "CA-1", "角度设定", "0", " ", false, 0, 72648, "角度设定角度设定角度设定角度设定"),
+    // new Parameter(2, 2, "CA-5", "电池电压", "0", "V", false),
+    // new Parameter(3, 3, "CA-2", "角度反馈", "0", " ", false),
+    // new Parameter(4, 4, "CA-3", "按键键码", "0", " ", false),
+    // new Parameter(5, 5, "CA-9", "误差", "0", " ", false),
+    // new Parameter(6, 6, "CA-4", "当前模式", "0", " ", false),
+    // new Parameter(7, 7, "CA-10", "输出开度", "0", " ", false),
+    // new Parameter(11, 11, "CA-12", "角度环比例系数", "0", " ", true),
+    // new Parameter(13, 13, "CA-13", "角度环积分常数", "0", " ", true),
+    // new Parameter(15, 15, "CA-18", "角度环微分常数", "0", " ", true),
+    // new Parameter(17, 17, "CA-19", "最大开度限制", "0", " ", true),
+    // new Parameter(19, 19, "CA-20", "最大速度限制", "0", " ", true),
+    // new Parameter(21, 21, "CA-21", "最低速度限制", "0", " ", true),
+    // new Parameter(23, 23, "CA-22", "独立转向速度", "0", " ", true),
+    // new Parameter(25, 25, "PB-02", "扫线反转速度", "0", " ", true),
+    // new Parameter(27, 27, "PB-03", "减速梯度", "0", "ms", true),
+    // new Parameter(29, 29, "PB-04", "加速时间", "0", "ms", true),
+    // new Parameter(24, 24, "ADJ-55", "AI1零偏", "0", " ", true),
+    // new Parameter(26, 26, "ADJ-56", "AI1增益", "0", " ", true),
+    // new Parameter(28, 28, "ADJ-57", "AI2零偏", "0", " ", true),
+    // new Parameter(30, 30, "ADJ-58", "AI2增益", "0", " ", true),
 ]
 
 layui.use('table', function () {
@@ -60,7 +70,7 @@ layui.use('table', function () {
                         }
                     },
                 },
-                { field: 'unit', title: '单位', width: 50 },
+                { field: 'unit', title: '单位', width: 60 },
                 { field: 'minvalue', title: '最小值', width: 75, hide: true },
                 { field: 'maxvalue', title: '最大值', width: 75, hide: true },
                 { field: 'explain', title: '参数说明', minWidth: 100 }

@@ -1,3 +1,29 @@
+//               
+var hex_arr = ['94 00', //-100
+    //-99       -8       -7       -6       -5       -4       -3       -2       -1      -90
+    '95 14', '96 29', '97 3D', '98 52', '99 66', '9A 7B', '9B 8F', '9C A4', '9D B8', '9E CD',  //-90
+    '9F E1', 'A0 F6', 'A2 0A', 'A3 1F', 'A4 33', 'A5 48', 'A6 5C', 'A7 71', 'A8 85', 'A9 9A',  //-80
+    'AA AE', 'AB C3', 'AC D7', 'AD EC', 'AF 00', 'B0 14', 'B1 29', 'B2 3D', 'B3 52', 'B4 66',  //-70
+    'B5 7B', 'B6 8F', 'B7 A4', 'B8 B8', 'B9 CD', 'BA E1', 'BB F6', 'BD DA', 'BE 1F', 'BF 33',  //-60
+    'C0 48', 'C1 5C', 'C2 71', 'C3 85', 'C4 9A', 'C5 AE', 'C6 C3', 'C7 D7', 'C8 EC', 'CA 00',  //-50
+    'CB 14', 'CC 29', 'CD 3D', 'CE 52', 'CF 66', 'D0 7B', 'D1 8F', 'D2 A4', 'D3 B8', 'D4 CD',  //-40
+    'D5 E1', 'D6 F6', 'D8 0A', 'D9 1F', 'DA 33', 'DB 48', 'DC 5C', 'DD 71', 'DE 85', 'DF 9A',  //-30
+    'E0 AE', 'E1 C3', 'E2 D7', 'E3 EC', 'E5 00', 'E6 14', 'E7 29', 'E8 3D', 'E9 52', 'EA 66',  //-20
+    'EB 7B', 'EC 8F', 'ED A4', 'EE 88', 'EF CD', 'F0 E1', 'F1 F6', 'F3 0A', 'F4 1F', 'F5 33',  //-10
+    'F6 48', 'F7 5C', 'F8 71', 'F9 85', 'FA 9A', 'FB AE', 'FC C3', 'FD D7', 'FE EC', '00 00',  //0
+    // 1        2        3        4        5        6        7        8        9       10    
+    '01 14', '02 29', '03 3D', '04 52', '05 66', '06 7b', '07 8F', '08 A4', '09 B8', '0A CD',  //10
+    '0B E1', '0C F6', '0E 0A', '0F 1F', '10 33', '11 48', '12 5C', '13 71', '14 85', '15 9A',  //20
+    '16 AE', '17 C3', '18 D7', '19 EC', '1B 00', '1C 14', '1D 29', '1E 3D', '1F 52', '20 66',  //30
+    '21 7B', '22 8F', '23 A4', '24 B8', '25 CD', '26 E1', '27 F6', '29 0A', '2A 1F', '2B 33',  //40
+    '2C 48', '2D 5C', '2E 71', '2F 85', '30 9A', '31 AE', '32 C3', '33 D7', '34 EC', '36 00',  //50
+    '37 14', '38 29', '39 3D', '3A 52', '3B 66', '3C 7B', '3D 8F', '3E A4', '3F B8', '40 CD',  //60
+    '41 E1', '42 F6', '44 0A', '45 1F', '46 33', '47 48', '48 5C', '49 71', '4A 85', '4B 9A',  //70
+    '4C AE', '4D C3', '4E D7', '4F EC', '51 00', '52 14', '53 29', '54 3D', '55 52', '56 66',  //80
+    '57 7B', '58 8F', '59 A4', '5A B8', '5B CD', '5C E1', '5D F6', '5F 0A', '60 1F', '61 33',  //90
+    '62 48', '63 5C', '64 71', '65 85', '66 9A', '67 AE', '68 C3', '69 D7', '6A EC', '6C 00',  //100
+]
+
 /***********************************************************************************************************
 *
 *                          从localStorage读取变量并还原滑块和设定转速的值
@@ -468,6 +494,8 @@ layui.use(['slider', 'jquery'], function () {
 
     var huakuai_value = 0; // 当前滑块的值
     var startValue = 0; // 触摸开始时的滑块值
+    var isSending = false; // 用于标记是否正在发送
+    var timeoutId; // 用于存储 setTimeout 的返回值
 
     ui_huakuai = slider.render({
         elem: '#ID-slider-demo-maxmin',
@@ -480,9 +508,24 @@ layui.use(['slider', 'jquery'], function () {
             huakuai_value = value;
             localStorage.setItem('huakuai_value', value);
             updata_main_set_zs(value * 30);
+            console.log("设定百分比" + value) // 滑块当前值
+
+            if (timeoutId) {
+                clearTimeout(timeoutId); // 清除之前的定时器
+            }
+
+            timeoutId = setTimeout(function () {
+                if (!isSending) {
+                    isSending = true;
+                    parent.sendWithRetries('01 C0 01' + hex_arr[value + 100]);
+                    setTimeout(function () {
+                        isSending = false;
+                    }, 200);
+                }
+            }, 200);
         },
         // done: function(value){  //拖拽结束时触发
-        //     console.log(value) // 滑块当前值
+        //     console.log("设定百分比"+value) // 滑块当前值
         //     // do something
         //   }
     });
@@ -755,7 +798,7 @@ option_zxt_zs = {
     tooltip: {
         trigger: 'axis', // 提示类型为坐标轴触发
         // position: 'bottom' // 将提示框放置在下方
-        position: [0,100] // 尝试其他位置，如 'top', 'right', 'left'
+        position: [0, 100] // 尝试其他位置，如 'top', 'right', 'left'
     },
     // 图例配置
     legend: {
@@ -844,7 +887,6 @@ option_zxt_zs && Chart_zxt_zs.setOption(option_zxt_zs);
 
 var chartDom = document.getElementById('zxt_dl');
 var Chart_zxt_dl = echarts.init(chartDom);
-console.log(option_zxt_zs.series[0].name)
 option_zxt_zs.series[0].name = "设定电流"
 option_zxt_zs.series[1].name = "实际电流"
 // 修改图例的数据项为 "设定电流"
@@ -885,7 +927,7 @@ const interval = 50; // 每隔 1 秒执行一次
 // 启动定时器
 const timer = setInterval(() => {
     if (localStorage.getItem('enableDevice') === "true") {
-        addData(mainChart1, (localStorage.getItem('huakuai_value') || 0) * 30, (Math.random() * (3000 - -3000) + -3000).toFixed(1));
+        // addData(mainChart1, (localStorage.getItem('huakuai_value') || 0) * 30, (Math.random() * (3000 - -3000) + -3000).toFixed(1));
         addData(mainChart2, 1000, Math.floor(Math.random() * (30000 - 0 + 1)) / 10 + 0);
     }
 

@@ -18,7 +18,7 @@ layui.use(function () {
                 data: "AA55"
             },
             {
-                title: 'C004 ......',
+                title: 'C004 关使能',
                 cmd: "C004",
                 data: "55AA"
             },

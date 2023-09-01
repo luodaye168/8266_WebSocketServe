@@ -93,8 +93,28 @@ connection.onmessage = function (e) {
         document.getElementById('iFrame').contentWindow.updateValue(CAN1_RX_DATA[1] * 256 + CAN1_RX_DATA[2], CAN1_RX_DATA[3] * 256 + CAN1_RX_DATA[4]);
         $("#res_msg").val(hexData);
         $("#input_res_count").val(res_count++);
-        if (CAN1_RX_DATA[1] * 256 + CAN1_RX_DATA[2] == 11)
-            document.getElementById('iFrame').contentWindow.updata_main_dl(CAN1_RX_DATA[3] * 256 + CAN1_RX_DATA[4]);
+
+        switch (CAN1_RX_DATA[1] * 256 + CAN1_RX_DATA[2]) {
+            case 14: //电压
+                document.getElementById('iFrame').contentWindow.update_main_dy(CAN1_RX_DATA[3] * 256 + CAN1_RX_DATA[4]);
+                break;
+            case 5: //速度反馈
+                document.getElementById('iFrame').contentWindow.updata_main_zs(parseInt((CAN1_RX_DATA[3] * 256 + CAN1_RX_DATA[4]) / 9, 10));
+                break;
+            case 7: //速度设定
+                document.getElementById('iFrame').contentWindow.updata_main_set_zs(parseInt((CAN1_RX_DATA[3] * 256 + CAN1_RX_DATA[4])/9,10));
+                break;
+            case 8: //电流
+                document.getElementById('iFrame').contentWindow.updata_main_dl(parseInt((CAN1_RX_DATA[3] * 256 + CAN1_RX_DATA[4])/9,10)/100);
+                break;
+            default:
+
+                break;
+        }
+        // if (CAN1_RX_DATA[1] * 256 + CAN1_RX_DATA[2] == 14) {
+        //     // document.getElementById('iFrame').contentWindow.addData(mainChart1, (localStorage.getItem('huakuai_value') || 0) * 30, (Math.random() * (3000 - -3000) + -3000).toFixed(1));
+        //     document.getElementById('iFrame').contentWindow.update_main_dy(CAN1_RX_DATA[3] * 256 + CAN1_RX_DATA[4]);
+        // }
     }
     else {
         console.log("接收的数据crc校验错误");
@@ -157,9 +177,6 @@ function sendmsg(send_msg) {
     let send_msg_crc = crcValue.toString(16).toUpperCase().padStart(4, '0').replace(/(.{2})/g, "$1 ")
     $("#send_msg").val(result + " " + send_msg_crc);
     console.log("下发： " + result + " " + send_msg_crc);
-    // 给目标元素追加「往下滑入」的动画
-    // setTimeout(function () { $('#send_msg').addClass('layui-anim-fadein'); });
-    // $('#send_msg').removeClass('layui-anim-fadein');
     try {
         connection.send(result + " " + send_msg_crc);
         $("#input_send_count").val(send_count++);
@@ -446,52 +463,52 @@ var option;
 
 option = {
     graphic: {
-      elements: [
-        {
-          type: 'text', // 元素类型为文本
-          left: 'center', // 文本元素的水平位置为居中
-          top: 'center', // 文本元素的垂直位置为居中
-          style: {
-            text: '桂林星辰科技', // 文本内容
-            fontSize: 25, // 字体大小
-            fontWeight: 'normal', // 字体粗细
-            lineDash: [0, 200], // 虚线的线段长度和间隔长度
-            lineDashOffset: 0, // 虚线偏移量
-            fill: 'transparent', // 文本的填充颜色（透明）
-            stroke: '#fff', // 文本的描边颜色（白色）
-            lineWidth: 1 // 描边的线宽
-          },
-          keyframeAnimation: {
-            duration: 5000, // 动画的持续时间（毫秒）
-            loop: true, // 是否循环播放动画
-            keyframes: [
-              {
-                percent: 0.6, // 动画进度的百分比（0.7即70%）
+        elements: [
+            {
+                type: 'text', // 元素类型为文本
+                left: 'center', // 文本元素的水平位置为居中
+                top: 'center', // 文本元素的垂直位置为居中
                 style: {
-                  fill: 'transparent', // 填充颜色（透明）
-                  lineDashOffset: 200, // 虚线偏移量
-                  lineDash: [200, 0] // 虚线的线段长度和间隔长度
+                    text: '桂林星辰科技', // 文本内容
+                    fontSize: 25, // 字体大小
+                    fontWeight: 'normal', // 字体粗细
+                    lineDash: [0, 200], // 虚线的线段长度和间隔长度
+                    lineDashOffset: 0, // 虚线偏移量
+                    fill: 'transparent', // 文本的填充颜色（透明）
+                    stroke: '#fff', // 文本的描边颜色（白色）
+                    lineWidth: 1 // 描边的线宽
+                },
+                keyframeAnimation: {
+                    duration: 5000, // 动画的持续时间（毫秒）
+                    loop: true, // 是否循环播放动画
+                    keyframes: [
+                        {
+                            percent: 0.6, // 动画进度的百分比（0.7即70%）
+                            style: {
+                                fill: 'transparent', // 填充颜色（透明）
+                                lineDashOffset: 200, // 虚线偏移量
+                                lineDash: [200, 0] // 虚线的线段长度和间隔长度
+                            }
+                        },
+                        {
+                            // 在动画进度为10%时停止
+                            percent: 0.8,
+                            style: {
+                                fill: 'transparent' // 填充颜色（透明）
+                            }
+                        },
+                        {
+                            percent: 1, // 动画进度的百分比（1即100%）
+                            style: {
+                                fill: '#fff' // 填充颜色（白色）
+                            }
+                        }
+                    ]
                 }
-              },
-              {
-                // 在动画进度为10%时停止
-                percent: 0.8,
-                style: {
-                  fill: 'transparent' // 填充颜色（透明）
-                }
-              },
-              {
-                percent: 1, // 动画进度的百分比（1即100%）
-                style: {
-                  fill: '#fff' // 填充颜色（白色）
-                }
-              }
-            ]
-          }
-        }
-      ]
+            }
+        ]
     }
-  };
+};
 
 option && myChart.setOption(option);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -502,7 +519,7 @@ option && myChart.setOption(option);
 *
 ***********************************************************************************************************/
 
-var idsToQuery = [11, 13, 15, 17, 5]; // 放入需要查询的 ID
+var idsToQuery = [3, 4, 5, 7, 8, 14]; // 放入需要查询的 ID
 
 function read_with_id(pa_id) {
     var message = addr.toString(16).padStart(2, '0') + pa_id.toString(16).padStart(4, '0') + " 00 00";
@@ -516,10 +533,10 @@ function write_with_id_val(pa_id, pa_val) {
 
 var currentIndex = 0; // 用于迭代查询的数组索引
 
-// setInterval(function () {
-//     read_with_id(idsToQuery[currentIndex++]);
-//     if (currentIndex >= idsToQuery.length) {
-//         currentIndex = 0; // 重新开始循环
-//     }
-// }, 100);
+setInterval(function () {
+    read_with_id(idsToQuery[currentIndex++]);
+    if (currentIndex >= idsToQuery.length) {
+        currentIndex = 0; // 重新开始循环
+    }
+}, 100);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
